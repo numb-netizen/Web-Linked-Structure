@@ -1,0 +1,68 @@
+/* A little motion around the existing homepage, without moving its text. */
+.hero-sparkles{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.hero-grid,.hero .stats{z-index:1}
+.hero-spark{position:absolute;width:5px;height:5px;border-radius:50%;background:#7dffc1;opacity:.32;animation:spark-drift var(--duration,10s) ease-in-out var(--delay,0s) infinite alternate}
+.hero-spark-ring{width:11px;height:11px;background:transparent;border:1px solid #a8ffba;opacity:.22}
+@keyframes spark-drift{from{transform:translate3d(0,0,0) scale(.75);opacity:.12}to{transform:translate3d(9px,var(--drift,-16px),0) scale(1.25);opacity:.42}}
+.college-identity img{animation:logo-bob 7s ease-in-out infinite}
+@keyframes logo-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.dabi-teaser-icon{display:inline-block;animation:icon-sway 8s ease-in-out infinite}
+@keyframes icon-sway{0%,75%,100%{transform:rotate(0)}82%{transform:rotate(-8deg)}90%{transform:rotate(7deg)}}
+.btn-p:focus-visible,.btn-p:hover,.dabi-teaser:focus-visible,.tree-dept:focus-visible{box-shadow:0 0 0 3px #b1ffca66,0 12px 28px #00c85333}
+.marquee:hover .marquee-track{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .hero-sparkles{display:none}
+  .blob,.college-identity img,.dabi-teaser-icon,.marquee-track{animation:none!important}
+  .reveal{opacity:1;transform:none;transition:none}
+  *,*::before,*::after{transition-duration:0.01ms!important;animation-duration:0.01ms!important;animation-iteration-count:1!important}
+}
+/* The control also pauses the existing marquee and background effects. */
+.motion-toggle{font:inherit;font-size:13px;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:9px;padding:6px 10px;cursor:pointer}
+.motion-toggle:hover,.motion-toggle:focus-visible{color:var(--text);border-color:var(--green2)}
+.motion-toggle:focus-visible{outline:2px solid var(--green2);outline-offset:3px}
+.motion-toggle[hidden]{display:none}
+.motion-paused .hero-sparkles{display:none}
+.motion-paused .blob,.motion-paused .college-identity img,.motion-paused .dabi-teaser-icon,.motion-paused .marquee-track{animation:none!important}
+.motion-paused .reveal{opacity:1;transform:none;transition:none}
+.motion-paused *, .motion-paused *::before, .motion-paused *::after{transition-duration:0.01ms!important;animation-duration:0.01ms!important;animation-iteration-count:1!important}
+
+/* Different decorative motions; they never block the page or the controls. */
+.hero-orbits{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.orbit{position:absolute;border:1px dashed #a1ffbc;opacity:.17;border-radius:50%;animation:orbit-spin 25s linear infinite}
+.orbit::after{content:"";position:absolute;width:7px;height:7px;top:4px;left:50%;border-radius:50%;background:#d5ffc6;box-shadow:0 0 12px #c1ffbf}
+.orbit-one{width:110px;height:110px;top:17%;right:12%}
+.orbit-two{width:68px;height:68px;bottom:19%;left:7%;animation-duration:18s;animation-direction:reverse}
+.orbit-three{width:44px;height:44px;top:49%;left:54%;animation-duration:22s}
+@keyframes orbit-spin{to{transform:rotate(360deg)}}
+.hero .grad{background-size:200% 100%;animation:color-flow 9s ease-in-out infinite alternate}
+@keyframes color-flow{from{background-position:0% 50%}to{background-position:100% 50%}}
+.cd-card{animation:card-glow 6s ease-in-out infinite}
+@keyframes card-glow{0%,100%{box-shadow:0 30px 70px #00000055}50%{box-shadow:0 28px 65px #00000055,0 0 25px #00c8531a}}
+.dabi-teaser[data-motion="bob"] .dabi-teaser-icon{animation:icon-bob 6s ease-in-out infinite}
+.dabi-teaser[data-motion="pulse"] .dabi-teaser-icon{animation:icon-pulse 7s ease-in-out infinite}
+@keyframes icon-bob{0%,70%,100%{transform:translateY(0)}80%{transform:translateY(-5px)}90%{transform:translateY(-2px)}}
+@keyframes icon-pulse{0%,70%,100%{transform:scale(1)}82%{transform:scale(1.12)}90%{transform:scale(.98)}}
+.tree-kid:focus-visible,.tree-kid:hover{box-shadow:0 0 0 2px #00e67666}
+@media(max-width:600px){.orbit-one{width:74px;height:74px;right:7%}.orbit-two{width:52px;height:52px}.orbit-three{display:none}}
+@media(prefers-reduced-motion:reduce){.hero-orbits{display:none}.orbit,.hero .grad,.cd-card,.dabi-teaser[data-motion] .dabi-teaser-icon{animation:none!important}}
+.motion-paused .hero-orbits{display:none}
+.motion-paused .orbit,.motion-paused .hero .grad,.motion-paused .cd-card,.motion-paused .dabi-teaser[data-motion] .dabi-teaser-icon{animation:none!important}
+
+/* Soft moving auroras, contours and tiny streaks sit behind the existing hero. */
+.hero-ambient{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;contain:paint}
+.aurora{position:absolute;border-radius:50%;pointer-events:none;animation:aurora-drift 21s ease-in-out infinite alternate}
+.aurora-one{width:min(90vw,1050px);height:min(62vw,650px);top:-14%;right:-16%;background:radial-gradient(ellipse,rgba(20,193,126,.21) 0%,rgba(20,138,145,.10) 35%,transparent 70%)}
+.aurora-two{width:min(95vw,900px);height:min(55vw,500px);left:-23%;bottom:-5%;background:radial-gradient(ellipse,rgba(22,164,107,.14) 0%,rgba(238,184,81,.07) 42%,transparent 70%);animation-duration:27s;animation-direction:alternate-reverse}
+@keyframes aurora-drift{0%{transform:translate3d(-3%,2%,0) scale(.94)}100%{transform:translate3d(7%,-5%,0) scale(1.08)}}
+.ambient-lines{position:absolute;inset:0;width:100%;height:100%;opacity:.7}
+.ambient-trace{stroke:#96ffd0;stroke-opacity:.38;stroke-dasharray:9 220;animation:trace-flow 22s linear infinite}
+@keyframes trace-flow{to{stroke-dashoffset:-458}}
+.ambient-comet{position:absolute;width:4px;height:4px;background:#c4ffe1;border-radius:50%;box-shadow:0 0 10px #a6ffd2;opacity:0;animation:comet-pass 17s ease-in-out infinite}
+.ambient-comet::before{content:"";position:absolute;width:55px;height:1px;right:2px;top:1px;background:linear-gradient(90deg,transparent,#9cffc8);transform:rotate(-17deg);transform-origin:right center}
+.comet-one{top:21%;right:22%}.comet-two{top:60%;left:20%;animation-delay:-9s;animation-duration:23s}
+@keyframes comet-pass{0%,12%,46%,100%{opacity:0;transform:translate3d(-22px,7px,0)}18%,34%{opacity:.55}42%{opacity:0;transform:translate3d(110px,-32px,0)}}
+@media(max-width:600px){.aurora-one{width:120vw;height:110vw;right:-50%}.aurora-two{width:120vw;height:80vw;left:-50%}.ambient-lines{opacity:.5}.comet-two{display:none}}
+@media(prefers-reduced-motion:reduce){.hero-ambient{display:none}.aurora,.ambient-trace,.ambient-comet{animation:none!important}}
+.motion-paused .hero-ambient{display:none}
+.motion-paused .aurora,.motion-paused .ambient-trace,.motion-paused .ambient-comet{animation:none!important}
