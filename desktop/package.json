@@ -1,9 +1,10 @@
 {
-  "name": "hsc-2027-desktop",
-  "version": "0.1.0-beta.1",
-  "description": "HSC 2027 study companion for Windows and Linux",
-  "author": "HSC 2027 study site",
+  "name": "chugc-study-portal",
+  "version": "1.0.0-beta.1",
+  "description": "CHUGC Study Portal — the chugc.cc.cd offline study companion for Windows and Linux",
+  "author": "CHUGC Study Portal contributors",
   "license": "GPL-3.0-or-later",
+  "homepage": "https://chugc.cc.cd/",
   "main": "main.cjs",
   "scripts": {
     "start": "electron .",
@@ -16,9 +17,8 @@
     "electron-builder": "26.18.1"
   },
   "build": {
-    "appId": "bd.edu.hsc2027.desktop",
-    "productName": "HSC 2027",
-    "artifactName": "HSC-2027-${version}-${os}-${arch}.${ext}",
+    "appId": "bd.edu.chugc.studyportal.desktop",
+    "productName": "CHUGC Study Portal",
     "directories": {
       "output": "dist",
       "buildResources": "build-resources"
@@ -35,6 +35,10 @@
         "filter": [
           "**/*"
         ]
+      },
+      {
+        "from": "../LICENSE",
+        "to": "LICENSE-GPL-3.0.txt"
       }
     ],
     "win": {
@@ -42,6 +46,7 @@
         "nsis"
       ],
       "icon": "build-resources/icon.ico",
+      "artifactName": "CHUGC-Study-Portal-${version}-windows-${arch}-setup.${ext}",
       "signAndEditExecutable": false
     },
     "nsis": {
@@ -55,8 +60,9 @@
         "AppImage"
       ],
       "icon": "build-resources/icon.png",
+      "artifactName": "CHUGC-Study-Portal-${version}-linux-${arch}.${ext}",
       "category": "Education",
-      "executableName": "hsc-2027"
+      "executableName": "chugc-study-portal"
     }
   }
 }

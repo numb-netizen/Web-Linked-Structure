@@ -17,7 +17,7 @@ test('production signing is manually dispatched, main-only and protected by an e
   assert.match(workflow, /verify-signature\.ps1/);
   assert.doesNotMatch(workflow, /-AllowUntrustedTestCertificate/);
   assert.match(workflow, /needs: sign/);
-  assert.match(workflow, /desktop-v0\.1\.0-signed-beta/);
+  assert.match(workflow, /study-portal-v.*windows-signed/);
 });
 
 test('forced signing, trusted verification and isolated dummy CI build are all required', () => {

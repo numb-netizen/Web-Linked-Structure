@@ -14,17 +14,17 @@ try {
   $installers = @(Get-ChildItem -Path dist-ci-signed -Filter '*.exe' -File)
   if ($installers.Count -ne 1) { throw 'Expected exactly one test installer.' }
   & ./scripts/verify-signature.ps1 -ExpectedThumbprint $cert.Thumbprint `
-    -AppPath 'dist-ci-signed/win-unpacked/HSC 2027.exe' -InstallerPath $installers[0].FullName -AllowUntrustedTestCertificate
+    -AppPath 'dist-ci-signed/win-unpacked/CHUGC Study Portal.exe' -InstallerPath $installers[0].FullName -AllowUntrustedTestCertificate
   $rejected = $false
   try {
     & ./scripts/verify-signature.ps1 -ExpectedThumbprint ('0' * 40) `
-      -AppPath 'dist-ci-signed/win-unpacked/HSC 2027.exe' -InstallerPath $installers[0].FullName -AllowUntrustedTestCertificate
+      -AppPath 'dist-ci-signed/win-unpacked/CHUGC Study Portal.exe' -InstallerPath $installers[0].FullName -AllowUntrustedTestCertificate
   } catch { $rejected = $true }
   if (-not $rejected) { throw 'Verifier accepted the wrong thumbprint.' }
   $rejected = $false
   try {
     & ./scripts/verify-signature.ps1 -ExpectedThumbprint $cert.Thumbprint `
-      -AppPath 'dist-ci-signed/win-unpacked/HSC 2027.exe' -InstallerPath $installers[0].FullName
+      -AppPath 'dist-ci-signed/win-unpacked/CHUGC Study Portal.exe' -InstallerPath $installers[0].FullName
   } catch { $rejected = $true }
   if (-not $rejected) { throw 'Production verifier accepted the untrusted test certificate.' }
   Write-Host 'Throwaway signing test passed; the test certificate is not trusted and the output is not distributed.'

@@ -144,19 +144,19 @@ cd site && python3 -m http.server 8000
 
 আবেদন পেজ সরানো হয়েছে; পুরোনো `dabi.html`-এ শুধু অপসারণের নোটিশ থাকে যাতে Android-এর আগের বান্ডল করা কপি আপডেটে প্রতিস্থাপিত হয়। বিদ্যমান Supabase ডেটা বা অনুমতি পরিবর্তন করা হয়নি: `dabi_public_supporters` টেবিলের প্রকাশ্য নামগুলো আগের মতো পাবলিক API দিয়ে পড়া এবং নতুন রেকর্ড জমা দেওয়া সম্ভব; রোল নম্বর পাবলিক API থেকে পড়া যায় না। ডেটা বা API অনুমতি সরাতে আলাদা সিদ্ধান্ত ও পদক্ষেপ প্রয়োজন। SQL স্কিমা `supabase/migrations/`-এ আছে।
 
-## Android অ্যাপ
+## CHUGC Study Portal — Android, Windows ও Linux
 
-সাইটের মেনুর **অ্যাপ ডাউনলোড** (`android-app.html`) পেজ থেকে beta APK ও ইনস্টলের নির্দেশনা পাওয়া যায়। `android/` হলো Android WebView অ্যাপের সোর্স। Android 1.3 থেকে সাইটের একটি সম্পূর্ণ কপি অ্যাপের সঙ্গে থাকে; বিষয়, রুটিন, টাইমার ও ট্র্যাকার অফলাইনে চলে। ইন্টারনেট থাকলে যাচাই করা নতুন সাইটের কপি প্রস্তুত হয় এবং ব্যবহারকারী চাইলে তা চালু করতে পারেন। অনলাইন ভিডিও এবং WhatsApp-এ ইন্টারনেট লাগে। Android System WebView প্রয়োজন। WhatsApp, YouTube ও বাইরের লিংক অন্য অ্যাপ বা ব্রাউজারে খোলে। পড়ার ট্র্যাকার ও অন্যান্য ব্রাউজার-সংরক্ষিত তথ্য অ্যাপের নিজস্ব WebView-তে থাকে; ফোনের ব্রাউজার বা অন্য ডিভাইসের সঙ্গে স্বয়ংক্রিয়ভাবে মেলে না।
+এই সাইটের **নিজস্ব** অ্যাপের ডাউনলোড: https://chugc.cc.cd/android-app.html । [GitHub Release `study-portal-v1.0.0-beta.1`](https://github.com/numb-netizen/Web-Linked-Structure/releases/tag/study-portal-v1.0.0-beta.1)-এ Android APK, Windows x64 installer, Linux x64 AppImage, SHA-256 checksum ও source/build provenance একসঙ্গে থাকে। পুরোনো Temp release-এর লিংক নয়। বিস্তারিত platform requirements, signing সীমা ও publication পদ্ধতি: [Application releases](docs/application-releases.md)।
 
-Android Studio-তে `android/` খুলে বা JDK 17 ও Android SDK 35 দিয়ে `cd android && ./gradlew testDebugUnitTest assembleDebug` চালিয়ে debug APK বানানো যায়। GitHub-এর **Build Android app** workflow-ও ৩০ দিনের জন্য APK artifact তৈরি করে। Debug APK পরীক্ষার জন্য, Play Store-এ প্রকাশের জন্য নয়; স্থায়ী বিতরণ বা আপডেটের জন্য নিজের সুরক্ষিত signing key দিয়ে release APK/AAB তৈরি করতে হবে। বিভিন্ন workflow run-এর debug key আলাদা হতে পারে, তাই আগের debug APK-এর উপর সরাসরি update নাও হতে পারে। Uninstall করলে অ্যাপের স্থানীয় tracker data মুছে যায়। কোনো keystore বা password রিপোতে রাখবেন না।
+### Android অ্যাপ
 
-### পরীক্ষামূলক Android release ও package
+`android/` হলো Android WebView অ্যাপের সোর্স। নিজস্ব application ID `bd.edu.chugc.studyportal` ও display name **CHUGC Study Portal**; পুরোনো `bd.edu.hsc2027` অ্যাপ overwrite করে না। অধ্যায়/স্টাডি রুটিন/১৩০-question বাংলা MCQ/ফন্ট ও ট্র্যাকার অ্যাপের সঙ্গে offline থাকে। ভিডিও, feedback, WhatsApp ও বাইরের portal-এ ইন্টারনেট লাগে। Android 6.0+ ও Android System WebView প্রয়োজন। বাইরের লিংক অন্য app/browser-এ খোলে; portal password নেওয়া হয় না।
 
-GitHub Releases-এর `android-v1.1-beta`-তে পরীক্ষামূলক **debug-signed** APK প্রকাশের workflow `.github/workflows/publish-android-beta.yml`। এটি আগে পরীক্ষিত main build artifact-টিই ব্যবহার করে; নতুন debug key তৈরি করে না। APK ও `SHA256SUMS.txt` সাধারণ ডাউনলোডের জন্য Releases-এ রাখা হয়। Packages-এ একই APK OCI artifact হিসেবে রাখা হয়; এটি ডেভেলপারদের `oras` দিয়ে pull করার জন্য, ফোনে সরাসরি ইনস্টল করার সাধারণ পথ নয়। নতুন GitHub container package ডিফল্টে private হতে পারে; জনসাধারণের জন্য দেখতে হলে মালিককে package settings থেকে visibility পরীক্ষা করতে হবে।
+Android Studio-তে `android/` খুলে বা JDK 17 ও Android SDK 35 দিয়ে `cd android && ./gradlew testDebugUnitTest assembleDebug` চালিয়ে APK বানানো যায়। **Build Android app** CI debug artifact তৈরি করে; unified **Package CHUGC Study Portal** workflow তিন platform পরীক্ষা করে শুধু **draft prerelease** প্রস্তুত করে। অতিরিক্ত website/emulator checks দেখে maintainer প্রকাশ করেন। পুরোনো hardcoded build replay publisher সরানো হয়েছে।
 
-Debug key নিরাপদ স্থায়ী release key নয়; নতুন signing key দিয়ে তৈরি APK পূর্বেরটির ওপর আপডেট নাও হতে পারে। চূড়ান্ত বিতরণের আগে মালিকের নিয়ন্ত্রণে নিরাপদ release signing key ও repository secrets সেট করতে হবে; key বা password কখনো রিপোতে রাখতে হবে না।
+এই প্রথম beta-র Android APK **debug-signed ও debuggable**, Play Store/production release নয়। স্থায়ী signing key সেট না থাকায় ভবিষ্যৎ run-এর APK সরাসরি update নাও হতে পারে। স্থায়ী release signing-এর private key/password সুরক্ষিত repository/environment secrets-এ provision করতে হবে, কখনো Git বা chat-এ নয়। এই কাজে স্থায়ী release key তৈরি বা কোনো secret প্রকাশ করা হয়নি।
 
-Android 1.2 beta থেকে আমাদের WebView একটি সাধারণ User-Agent চিহ্ন পাঠায়, যার ভিত্তিতে সাইটে শুধু এই অ্যাপের মেনু ও ফুটারে অ্যাপ ডাউনলোড লিংক লুকানো হয়। অন্য WebView ও সাধারণ ব্রাউজারে লিংক থাকে। এটি নিরাপত্তা বা পরিচয় যাচাই নয়। পুরোনো 1.1 APK-তে চিহ্ন নেই, তাই সেখানে লিংক আগের মতো দেখা যাবে। 1.2 পরীক্ষামূলক APK debug key দিয়ে সই করা; আলাদা key হলে আগেরটির ওপর আপডেট নাও হতে পারে।
+নিজস্ব app, পুরোনো app, phone browser ও device-এর tracker আলাদা; automatic migration/sync হয় না। পুরোনো progress রাখতে পুরোনো app/data মুছবেন না। Android app uninstall/data clear করলে ওই app-এর local tracker হারাবে। User-Agent-এর পুরোনো `HSC2027App` presentation marker রাখা হয়েছে যাতে শুধু নিজের Android app-এ redundant app-download links লুকায়; এটি authentication নয়।
 
 ### অফলাইন সাইট ও আপডেট
 
@@ -174,7 +174,7 @@ npm run dist:linux  # Linux-এ
 npm run dist:win    # Windows-এ
 ```
 
-Linux AppImage-এ `chmod +x <file>.AppImage` করে চালাতে হয়; কিছু distribution-এ FUSE লাগতে পারে। Windows build unsigned, তাই SmartScreen সতর্ক করতে পারে। শুধু বিশ্বস্ত উৎস থেকে ডাউনলোড করে প্রকাশিত SHA-256 মিলিয়ে নিন। ইনস্টলার স্থানীয় app data মুছে দেয় না, কিন্তু ব্যবহারকারী নিজে app data সরালে tracker হারাবে। `desktop.yml` CI দুই OS-এ offline navigation ও tracker পরীক্ষার পর installer তৈরি করে; প্রয়োজনে workflow dispatch দিয়ে beta release প্রকাশ করা যায়।
+Linux AppImage-এ `chmod +x <file>.AppImage` করে চালাতে হয়; কিছু distribution-এ FUSE লাগতে পারে। Windows build unsigned, তাই SmartScreen সতর্ক করতে পারে। শুধু বিশ্বস্ত উৎস থেকে ডাউনলোড করে প্রকাশিত SHA-256 মিলিয়ে নিন। ইনস্টলার স্থানীয় app data মুছে দেয় না, কিন্তু ব্যবহারকারী নিজে app data সরালে tracker হারাবে। `desktop.yml` CI দুই OS-এ offline navigation, tracker, তিন বিভাগের routine ও ১৩০-question quiz পরীক্ষা করে installer তৈরি করে। আলাদা `app-release.yml` workflow তিন platform-এর version/identity মেলানো package, checksum ও build provenance দিয়ে draft release প্রস্তুত করে; review ছাড়া public publish হয় না। Desktop app ID `bd.edu.chugc.studyportal.desktop`; পুরোনো app-এর data আলাদা থাকে।
 
 ### বিশ্বস্ত Windows code signing (প্রস্তুত ব্যবস্থা)
 
@@ -183,11 +183,13 @@ Linux AppImage-এ `chmod +x <file>.AppImage` করে চালাতে হ�
 1. GitHub repository Settings → Environments-এ `windows-signing` environment আগে তৈরি করুন, deployment শুধু `main`-এ সীমিত করুন এবং সম্ভব হলে required reviewer অনুমোদন দিন। Secrets-এ শুধু environment-এর মাধ্যমে access দিন। Branch protection ও বিশ্বস্ত maintainer review চালু রাখুন।
 2. ওই environment-এর secrets হিসেবে `WINDOWS_SIGNING_PFX_BASE64` (সম্পূর্ণ PFX-এর single-line base64) ও `WINDOWS_SIGNING_PFX_PASSWORD` দিন। Environment variable `WINDOWS_SIGNING_CERT_SHA1`-এ ঠিক ৪০টি hex অক্ষরের public certificate thumbprint দিন। কখনো certificate, private key, password বা secret-এর মান চ্যাট, লগ বা Git-এ দেবেন না। Repository/environment পরিচালনার অনুমতি শুধু বিশ্বস্ত ব্যক্তিদের দিন।
 3. Actions → **Sign Windows desktop beta** workflow `main` থেকে চালান। সাইনিং শুধু ওই protected environment-এ চলে। Secrets না থাকলে, PFX/ thumbprint না মিললে, signature বিশ্বস্ত না হলে বা timestamp না থাকলে build ব্যর্থ হয়। Installer ও bundled app দুটির স্বাক্ষর যাচাই এবং offline smoke test পাস করার পরেই artifact তৈরি হবে। প্রথমে publish না করে artifact পরীক্ষা করুন।
-4. প্রকাশ করতে workflow-তে `publish_signed_beta` নির্বাচন করলে আলাদা prerelease `desktop-v0.1.0-signed-beta` তৈরি হবে; বিদ্যমান unsigned release পরিবর্তিত হয় না। Tag আগে থেকে থাকলে workflow সেটি overwrite করে না। Signature থাকা মানেই SmartScreen-এর কোনো সতর্কতা থাকবে, এমন নিশ্চয়তা নেই।
+4. প্রকাশ করতে workflow-তে `publish_signed_beta` নির্বাচন করলে versioned আলাদা prerelease `study-portal-v<version>-windows-signed` তৈরি হবে; বিদ্যমান unsigned release পরিবর্তিত হয় না। Tag আগে থেকে থাকলে workflow সেটি overwrite করে না। Signature থাকা মানেই SmartScreen-এর কোনো সতর্কতা থাকবে, এমন নিশ্চয়তা নেই।
 
 CI-তে আলাদা temporary self-signed certificate দিয়ে signing পথ পরীক্ষা হয়; সেটি অবিশ্বস্ত, শুধু পরীক্ষার জন্য এবং কোনো release artifact-এ যায় না। Secret থাকা job-এ CI dependencies-ও key ব্যবহারের সুযোগ পায়; সেই কারণে workflow, lockfile ও dependencies বদল সর্বদা review করুন।
 
-### Lightweight desktop beta
+### Lightweight desktop beta (ঐতিহাসিক/ঐচ্ছিক source)
+
+এই পুরোনো Lite variant বর্তমান তিন-platform release-এর primary download নয়; নতুন Windows installer ও Linux AppImage-এ Chromium bundle করা থাকে।
 
 `desktop-lite/` হলো আলাদা Lite সংস্করণ: Windows x64-এ WebView2 এবং Linux-এ system WebKitGTK ব্যবহার করে, Electron-এর browser bundle নয়। Windows ZIP পুরো extract করে চালাতে হয়; Microsoft **.NET 10 Desktop Runtime x64** ও **Edge WebView2 Runtime** আগে থেকে না থাকলে আলাদা ইনস্টল করতে হবে। অ্যাপ unsigned, SmartScreen সতর্ক করতে পারে। Linux `.deb` Ubuntu/Debian ও WebKitGTK 4.1-এর জন্য, সিস্টেম dependencies ইনস্টল করতে হতে পারে; এটি সব distribution-এর AppImage বিকল্প নয়। Dependencies ডাউনলোড/ইনস্টল করতে ইন্টারনেট ও অতিরিক্ত জায়গা লাগতে পারে।
 

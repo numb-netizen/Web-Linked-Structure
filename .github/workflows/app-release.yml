@@ -1,0 +1,186 @@
+name: Package CHUGC Study Portal
+
+on:
+  push:
+    # A version change on a working branch prepares a draft, never a public release.
+    branches-ignore: [main]
+    paths: ['data/app-release.json', '.github/workflows/app-release.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: app-package-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/app-release.cjs --check
+      - run: node --test tests/*.test.cjs
+      - run: python3 -m unittest discover -s tests -p 'desktop_lite*.py' -v
+
+  android:
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - id: release
+        run: node scripts/app-release.cjs --github-output >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Install Android SDK components
+        run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0"'
+      - name: Unit test and build the explicitly debug-signed beta
+        working-directory: android
+        run: |
+          if ! ./gradlew --no-daemon testDebugUnitTest assembleDebug assembleDebugAndroidTest > "$RUNNER_TEMP/app-build.log" 2>&1; then
+            python3 -c 'import os; s="".join(open(os.path.join(os.environ["RUNNER_TEMP"],"app-build.log")).readlines()[-100:]); print("::error title=Android package::"+s.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A"))'
+            exit 1
+          fi
+          tail -n 20 "$RUNNER_TEMP/app-build.log"
+      - name: Verify APK identity, version and public signing certificate
+        env:
+          APK_FILE: ${{ steps.release.outputs.android_file }}
+          APP_ID: ${{ steps.release.outputs.android_id }}
+          APP_CODE: ${{ steps.release.outputs.android_code }}
+          APP_VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir release
+          cp android/app/build/outputs/apk/debug/app-debug.apk "release/$APK_FILE"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "release/$APK_FILE" > release/ANDROID-VERIFICATION.txt
+          grep -F "package: name='$APP_ID' versionCode='$APP_CODE' versionName='$APP_VERSION'" release/ANDROID-VERIFICATION.txt
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "release/$APK_FILE" >> release/ANDROID-VERIFICATION.txt
+          grep -F 'CN=Android Debug' release/ANDROID-VERIFICATION.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chugc-release-android
+          path: release/*
+          if-no-files-found: error
+          retention-days: 30
+
+  desktop:
+    needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            platform: linux
+          - os: windows-2022
+            platform: windows
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - run: npm ci
+      - run: node --test ../tests/desktop.test.cjs
+      - name: Offline smoke test before packaging on Linux
+        if: matrix.platform == 'linux'
+        env:
+          HSC_DESKTOP_SMOKE: '1'
+        run: xvfb-run -a npm run smoke -- --no-sandbox
+      - name: Offline smoke test before packaging on Windows
+        if: matrix.platform == 'windows'
+        env:
+          HSC_DESKTOP_SMOKE: '1'
+        run: npm run smoke
+      - name: Package Linux x64 AppImage
+        if: matrix.platform == 'linux'
+        run: npm run dist:linux
+      - name: Package unsigned Windows x64 installer
+        if: matrix.platform == 'windows'
+        run: npm run dist:win
+      - name: Smoke test the packaged Linux application
+        if: matrix.platform == 'linux'
+        env:
+          HSC_DESKTOP_SMOKE: '1'
+        run: xvfb-run -a ./dist/linux-unpacked/chugc-study-portal --no-sandbox
+      - name: Smoke test the packaged Windows application
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        env:
+          HSC_DESKTOP_SMOKE: '1'
+        run: |
+          $p = Start-Process -FilePath 'dist/win-unpacked/CHUGC Study Portal.exe' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "Packaged app test failed: $($p.ExitCode)" }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chugc-release-${{ matrix.platform }}
+          path: |
+            desktop/dist/*.exe
+            desktop/dist/*.AppImage
+          if-no-files-found: error
+          retention-days: 30
+
+  draft:
+    needs: [validate, android, desktop]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - id: release
+        run: node scripts/app-release.cjs --github-output >> "$GITHUB_OUTPUT"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: chugc-release-*
+          path: release
+          merge-multiple: true
+      - name: Verify all installer headers and prepare checksums and provenance
+        run: node scripts/app-release.cjs --prepare release
+      - name: Create a draft prerelease; never overwrite an existing tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+          APP_VERSION: ${{ steps.release.outputs.version }}
+          APK_FILE: ${{ steps.release.outputs.android_file }}
+          WINDOWS_FILE: ${{ steps.release.outputs.windows_file }}
+          LINUX_FILE: ${{ steps.release.outputs.linux_file }}
+        run: |
+          set -euo pipefail
+          git ls-remote --tags origin "refs/tags/$RELEASE_TAG" > "$RUNNER_TEMP/existing-tag.txt"
+          if [ -s "$RUNNER_TEMP/existing-tag.txt" ]; then
+            echo 'Tag already exists; refusing to reuse an immutable release version.' >&2
+            exit 1
+          fi
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo 'Release already exists; refusing to overwrite it. Bump the version for a new build.' >&2
+            exit 1
+          fi
+          gh release create "$RELEASE_TAG" \
+            "release/$APK_FILE" "release/$WINDOWS_FILE" "release/$LINUX_FILE" \
+            release/SHA256SUMS.txt release/BUILD-INFO.json release/ANDROID-VERIFICATION.txt \
+            --target "$GITHUB_SHA" --draft --prerelease \
+            --title "CHUGC Study Portal $APP_VERSION — Android, Windows & Linux" \
+            --notes-file release/RELEASE-NOTES.md
+          echo "Draft prepared. Review native/emulator and website checks before publishing: https://github.com/$GH_REPO/releases" >> "$GITHUB_STEP_SUMMARY"

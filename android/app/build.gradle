@@ -4,11 +4,12 @@ android {
     namespace 'bd.edu.hsc2027'
     compileSdk 35
     defaultConfig {
-        applicationId 'bd.edu.hsc2027'
+        // Separate identity: does not overwrite the older Temp/HSC 2027 app.
+        applicationId 'bd.edu.chugc.studyportal'
         minSdk 23
         targetSdk 35
-        versionCode 4
-        versionName '1.3'
+        versionCode 1
+        versionName '1.0.0-beta.1'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     // Keep the original HTTPS origin for localStorage while bundling the site.

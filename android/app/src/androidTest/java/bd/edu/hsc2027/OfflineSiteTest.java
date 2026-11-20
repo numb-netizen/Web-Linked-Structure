@@ -23,6 +23,7 @@ public class OfflineSiteTest {
     @Test public void firstLaunchAndStudyFeaturesWorkWithoutNetwork() throws Exception {
         assumeTrue("true".equals(InstrumentationRegistry.getArguments().getString("requireOffline")));
         Instrumentation i = InstrumentationRegistry.getInstrumentation();
+        assertEquals("Dedicated install identity", "bd.edu.chugc.studyportal", i.getTargetContext().getPackageName());
         ConnectivityManager cm = (ConnectivityManager) i.getTargetContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = cm.getActiveNetworkInfo();
         assertTrue("Emulator must actually be disconnected", info == null || !info.isConnected());
@@ -44,6 +45,12 @@ public class OfflineSiteTest {
             assertPage(i, web, overlay, "পদার্থ");
             i.runOnMainSync(() -> web.loadUrl(NavigationPolicy.HOME + "routine.html"));
             assertPage(i, web, overlay, "রুটিন");
+            assertEquals("Three offline study plans remain selectable", "true", js(i, web,
+                    "['science','arts','commerce'].every(id => { const tab=document.querySelector('#routine-tab-'+id); tab.click(); return tab.getAttribute('aria-selected') === 'true' && !document.getElementById(id).hidden && document.querySelectorAll('#'+id+' .study-week-table tbody tr').length === 7; })"));
+            i.runOnMainSync(() -> web.loadUrl(NavigationPolicy.HOME + "bangla.html"));
+            assertPage(i, web, overlay, "বাংলা ১ম পত্র");
+            assertEquals("Offline 130-question quiz can be started, answered and submitted", "true", js(i, web,
+                    "(() => {if(!window.HSC_BANGLA_MCQ_BANK || HSC_BANGLA_MCQ_BANK.questions.length !== 130)return false; document.querySelector('#mcq-open').click(); const count=document.querySelector('#mcq-count'); count.value='5'; count.dispatchEvent(new Event('change')); document.querySelector('#mcq-start').click(); const radio=document.querySelector('#mcq-options input'); if(!radio)return false; radio.click(); document.querySelector('#mcq-submit').click(); document.querySelector('#mcq-confirm-yes').click(); return !document.querySelector('#mcq-result').hidden && document.querySelectorAll('.mcq-review-item').length === 5;})()"));
             i.runOnMainSync(() -> web.loadUrl(NavigationPolicy.HOME + "tracker.html"));
             assertPage(i, web, overlay, "ট্র্যাকার");
             assertEquals("true", js(i, web, "(() => {let el=document.querySelector('.chap'); if(!el)return false; if(!el.classList.contains('done'))el.click(); return el.classList.contains('done')})()"));

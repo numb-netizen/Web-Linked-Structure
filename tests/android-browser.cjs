@@ -1,5 +1,6 @@
 const assert = require('node:assert/strict');
 const {chromium} = require('playwright-core');
+const {config, downloadUrl} = require('../scripts/app-release.cjs');
 
 (async () => {
   const browser = await chromium.launch({headless: true, executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome', args: ['--no-sandbox']});
@@ -113,6 +114,27 @@ const {chromium} = require('playwright-core');
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
       await page.close();
     }
+    // Native download links work without JavaScript and never point at the older Temp app.
+    for (const width of [320, 768, 1440]) {
+      for (const javaScriptEnabled of [true, false]) {
+        const page = await browser.newPage({viewport:{width,height:900},javaScriptEnabled,reducedMotion:'reduce'});
+        await page.route('**/*', route => route.request().url().startsWith('http://127.0.0.1:8765/') ? route.continue() : route.abort());
+        await page.goto('http://127.0.0.1:8765/android-app.html');
+        for (const [platform, selector] of [['android','.android-download'],['windows','.windows-download'],['linux','.linux-download']]) {
+          const link = page.locator(selector);
+          assert.equal(await link.isVisible(),true,`${platform} download at ${width}px, JS ${javaScriptEnabled}`);
+          assert.equal(await link.getAttribute('href'),downloadUrl(config[platform].file));
+          if (javaScriptEnabled) {
+            await link.focus();
+            assert.equal(await link.evaluate(node=>node===document.activeElement),true);
+          }
+        }
+        await page.evaluate(()=>document.fonts.ready);
+        assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth),true,`three-platform downloads fit ${width}px, JS ${javaScriptEnabled}`);
+        assert.equal(await page.locator('a[href*="numb-netizen/Temp/releases"]').count(),0);
+        await page.close();
+      }
+    }
     // Without JavaScript, the button is disabled rather than claiming success.
     {
       const page = await browser.newPage({javaScriptEnabled:false, viewport:{width:360,height:720}});
@@ -196,8 +218,8 @@ const {chromium} = require('playwright-core');
       assert.equal(await page.locator('#burger').getAttribute('aria-expanded'), 'true');
       await page.locator('#navLinks a[href="android-app.html"]').click();
       assert.match(page.url(), /android-app\.html$/);
-      assert.equal(await page.locator('a.android-download').getAttribute('href'), 'https://github.com/numb-netizen/Temp/releases/download/android-v1.3-beta/HSC-2027-v1.3-beta-debug.apk');
-      assert.ok(await page.locator('text=পরীক্ষামূলক debug APK').count());
+      assert.equal(await page.locator('a.android-download').getAttribute('href'), downloadUrl(config.android.file));
+      assert.ok(await page.locator('text=debug-signed ও debuggable APK').count());
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true, `horizontal overflow at ${width}`);
       await page.close();
     }
