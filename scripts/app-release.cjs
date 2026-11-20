@@ -22,7 +22,9 @@ function checkConfiguration() {
   const prefix = `CHUGC-Study-Portal-${config.version}`;
   assert.equal(config.android.file, `${prefix}-android-debug.apk`);
   assert.equal(config.windows.file, `${prefix}-windows-x64-setup.exe`);
-  assert.equal(config.linux.file, `${prefix}-linux-x64.AppImage`);
+  // electron-builder's AppImage target expands --x64 to the conventional x86_64 filename.
+  assert.equal(config.linux.arch, 'x86_64');
+  assert.equal(config.linux.file, `${prefix}-linux-x86_64.AppImage`);
   const pkg = JSON.parse(read('desktop/package.json'));
   const lock = JSON.parse(read('desktop/package-lock.json'));
   assert.equal(pkg.version, config.version);

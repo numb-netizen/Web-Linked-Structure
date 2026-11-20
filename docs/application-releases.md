@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | Android 6.0+ | `CHUGC-Study-Portal-1.0.0-beta.1-android-debug.apk` | `bd.edu.chugc.studyportal` |
 | Windows 10/11 x64 | `CHUGC-Study-Portal-1.0.0-beta.1-windows-x64-setup.exe` | Electron app ID `bd.edu.chugc.studyportal.desktop` |
-| Linux x86_64 | `CHUGC-Study-Portal-1.0.0-beta.1-linux-x64.AppImage` | executable `chugc-study-portal` |
+| Linux x86_64 | `CHUGC-Study-Portal-1.0.0-beta.1-linux-x86_64.AppImage` | executable `chugc-study-portal` |
 
 Android namespace/source package ইচ্ছাকৃতভাবে `bd.edu.hsc2027`-তেই আছে; installable application ID আলাদা। আগে ডাউনলোড করা Temp/HSC 2027 app overwrite হয় না। নতুন app, পুরোনো app, browser ও device-এর tracker আলাদা; automatic migration/sync নেই। পুরোনো তথ্য রাখতে পুরোনো app/data মুছবেন না। Tracker-এর বিদ্যমান `hsc2027:*` keys ও site-এর quiz/রুটিন অপরিবর্তিত।
 

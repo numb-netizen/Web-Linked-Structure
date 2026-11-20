@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | Android | `CHUGC-Study-Portal-{{VERSION}}-android-debug.apk` | Android 6.0+ ও Android System WebView; platform WebView ব্যবহারের কারণে APK-তে নির্দিষ্ট CPU ABI-র native library নেই |
 | Windows | `CHUGC-Study-Portal-{{VERSION}}-windows-x64-setup.exe` | Windows 10/11 x64; Chromium অ্যাপের সঙ্গেই আছে, আলাদা .NET/WebView2 লাগে না |
-| Linux | `CHUGC-Study-Portal-{{VERSION}}-linux-x64.AppImage` | সমর্থিত x86_64 desktop Linux; GTK/NSS-সহ system libraries ও কিছু distribution-এ FUSE লাগতে পারে |
+| Linux | `CHUGC-Study-Portal-{{VERSION}}-linux-x86_64.AppImage` | সমর্থিত x86_64 desktop Linux; GTK/NSS-সহ system libraries ও কিছু distribution-এ FUSE লাগতে পারে |
 
 ### Android
 
@@ -25,8 +25,8 @@ Installer চালিয়ে নিজের account-এর জন্য install
 নিজের ডাউনলোড করা ফাইলের directory-তে:
 
 ```sh
-chmod +x CHUGC-Study-Portal-{{VERSION}}-linux-x64.AppImage
-./CHUGC-Study-Portal-{{VERSION}}-linux-x64.AppImage
+chmod +x CHUGC-Study-Portal-{{VERSION}}-linux-x86_64.AppImage
+./CHUGC-Study-Portal-{{VERSION}}-linux-x86_64.AppImage
 ```
 
 কিছু distribution-এ উপযুক্ত FUSE package লাগবে। FUSE না থাকলে AppImage-এর `--appimage-extract` এবং `squashfs-root/AppRun` বিকল্প ব্যবহার করা যায়; প্রয়োজনীয় system libraries ও sandbox support তখনও লাগবে। অ্যাপকে root হিসেবে চালাবেন না বা sandbox বন্ধ করবেন না। ARM Linux build নয়।
