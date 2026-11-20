@@ -50,7 +50,8 @@
     $('mcq-question-index').textContent = 'প্রশ্ন ' + bn(current + 1) + ' / ' + bn(session.questions.length);
     $('mcq-prompt').textContent = q.prompt;
     $('mcq-question-meta').textContent = chapterNames.get(q.chapterId) + ' · ' + core.originLabel(q.origin) + ' · ' + q.id;
-    const options = $('mcq-options'); options.replaceChildren();
+    // textContent reset also works in older Android System WebViews (before replaceChildren).
+    const options = $('mcq-options'); options.textContent = '';
     q.options.forEach((text, index) => {
       const label = node('label', undefined, 'mcq-option'), input = document.createElement('input');
       input.type = 'radio'; input.name = 'mcq-answer'; input.value = String(index); input.checked = session.answers[current] === index;
@@ -72,7 +73,7 @@
     stopTimer();
     session = core.createSession(pool, count, minutes); active = true; current = 0; warned = false;
     lastPool = pool.slice(); lastCount = count; lastMinutes = minutes;
-    stage('mcq-running'); $('mcq-palette').replaceChildren();
+    stage('mcq-running'); $('mcq-palette').textContent = '';
     session.questions.forEach((q, index) => {
       const button = node('button'); button.type = 'button';
       button.addEventListener('click', () => { if (!active || expire()) return; current = index; renderQuestion(); });
@@ -105,7 +106,7 @@
     $('mcq-confirm').hidden = false; focus('mcq-confirm-title');
   }
   function renderReview(result) {
-    const review = $('mcq-review'); review.replaceChildren();
+    const review = $('mcq-review'); review.textContent = '';
     const statusNames = {correct:'✓ সঠিক', wrong:'✕ ভুল', skipped:'— উত্তর দেওয়া হয়নি'};
     result.details.forEach((d, index) => {
       const q = d.question, detail = node('details', undefined, 'mcq-review-item'); detail.dataset.status = d.status; detail.dataset.questionId = q.id;

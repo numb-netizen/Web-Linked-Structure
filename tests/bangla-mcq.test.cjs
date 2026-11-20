@@ -133,9 +133,10 @@ test('Bangla page has one in-page quiz and the exact user playlist, not a search
   assert.match(main,/সম্পূর্ণ বিষয়ের ওয়ান শট ক্লাস/);
   assert.ok(main.indexOf('id="bangla-mcq"')<main.indexOf('data-subject="bangla"'));
   assert.ok(main.includes('id="mcq-open" aria-controls="mcq-app" hidden'));
-  for(const asset of ['mcq-core.js','bangla-mcq-bank.js','bangla-mcq.js']) assert.equal((html.match(new RegExp(`src="assets/${asset.replace('.','\\.')}\\?v=1"`,'g'))||[]).length,1);
+  for(const [asset,version] of [['mcq-core.js',1],['bangla-mcq-bank.js',1],['bangla-mcq.js',2]]) assert.equal((html.match(new RegExp(`src="assets/${asset.replace('.','\\.')}\\?v=${version}"`,'g'))||[]).length,1);
   const js=read('site/assets/bangla-mcq.js');
   assert.doesNotMatch(js,/fetch\(|XMLHttpRequest|localStorage|sessionStorage|innerHTML|eval\(/);
+  assert.doesNotMatch(js,/\.replaceChildren\(/, 'older Android WebViews must render and submit the quiz too');
   assert.match(js,/visibilitychange/);assert.match(js,/pagehide/);
   assert.match(main,/সার্ভারে পাঠানো বা সংরক্ষণ করা হয় না/);
 });

@@ -115,5 +115,12 @@ if (require.main === module) {
         repository: process.env.GITHUB_REPOSITORY});
       console.log('Three installer headers, APK identity/certificate, SHA-256 sums and build provenance verified.');
     } else throw new Error('Usage: node scripts/app-release.cjs --check | --github-output | --prepare DIRECTORY');
-  })().catch(error => { console.error(error); process.exitCode = 1; });
+  })().catch(error => {
+    console.error(error);
+    if (process.env.GITHUB_ACTIONS === 'true') {
+      const message = String(error.stack || error).replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A');
+      console.error('::error title=App release verification::' + message);
+    }
+    process.exitCode = 1;
+  });
 }

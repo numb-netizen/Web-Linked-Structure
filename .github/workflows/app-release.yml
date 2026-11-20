@@ -156,7 +156,9 @@ jobs:
           path: release
           merge-multiple: true
       - name: Verify all installer headers and prepare checksums and provenance
-        run: node scripts/app-release.cjs --prepare release
+        run: |
+          ls -lh release
+          node scripts/app-release.cjs --prepare release
       - name: Create a draft prerelease; never overwrite an existing tag
         env:
           GH_TOKEN: ${{ github.token }}

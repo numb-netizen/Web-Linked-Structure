@@ -155,6 +155,21 @@ async function submit(page) {
    await page.goto(BASE+'bangla.html');assert.equal(await page.locator('#mcq-open').isVisible(),false);assert.equal(await page.locator('#mcq-fallback').isVisible(),true);
    await context.close();
   }
+  // API 30 emulator WebView lacks Element.replaceChildren: exercise the real quiz without it.
+  {
+   const context=await browser.newContext({reducedMotion:'reduce'}),page=await context.newPage(),errors=[];
+   await context.route('**/*',route=>route.request().url().startsWith(BASE)?route.continue():route.abort());
+   await context.addInitScript(()=>{Element.prototype.replaceChildren=undefined;});
+   page.on('pageerror',error=>errors.push(error.message));
+   await page.goto(BASE+'bangla.html');await page.locator('#mcq-open').click();
+   await page.locator('#mcq-count').selectOption('5');await page.locator('#mcq-start').click();
+   await choose(page,true);await submit(page);
+   assert.equal(await page.locator('#mcq-correct').textContent(),'১');
+   assert.equal(await page.locator('.mcq-review-item').count(),5);
+   assert.deepEqual(errors,[],'older WebView DOM compatibility');
+   await context.close();
+   console.log('PASS legacy Android WebView DOM: start, answer, submit and review without replaceChildren');
+  }
   // Storage denial does not disable an independent, local quiz (tracker may report its own error).
   {
    const context=await browser.newContext(),page=await context.newPage();
