@@ -4,7 +4,16 @@ const {chromium} = require('playwright-core');
 const BASE = 'http://127.0.0.1:8765/';
 const localOnly = route => route.request().url().startsWith(BASE) ? route.continue() : route.abort();
 const state = page => page.locator('html').getAttribute('data-galaxy-motion');
-async function settled(page) { await page.evaluate(() => document.fonts.ready); }
+async function settled(page) {
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+    // Audit the final theme colours, not a fast runner's intermediate transition frame.
+    // Never wait for the intentionally infinite galaxy animations or disable their motion.
+    await Promise.all(document.getAnimations()
+      .filter(animation => animation instanceof CSSTransition)
+      .map(animation => animation.finished.catch(() => {})));
+  });
+}
 async function assertLayers(page, expected) {
   const states = await page.locator('.galaxy-animated').evaluateAll(layers => layers.map(layer => {
     const css = getComputedStyle(layer);
@@ -62,6 +71,7 @@ async function assertParticles(page, width) {
       const heading = await page.locator('.hero h1').boundingBox();
       for (const theme of ['light','dark']) {
         if (theme === 'dark') await page.locator('.theme-toggle').click();
+        await settled(page);
         await assertLayout(page,width);
         await assertBackground(page,'.campus-backdrop');
         await assertParticles(page,width);
@@ -73,7 +83,7 @@ async function assertParticles(page, width) {
         assert.deepEqual(await page.locator('.hero h1').boundingBox(),heading,'theme/motion does not move the heading');
         if ([390,1440].includes(width)) {
           await page.addScriptTag({path:require.resolve('axe-core/axe.min.js')});
-          const violations = await page.evaluate(async () => (await axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(x => ({id:x.id,targets:x.nodes.map(n => n.target)})));
+          const violations = await page.evaluate(async () => (await axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(x => ({id:x.id,nodes:x.nodes.map(n => ({target:n.target,summary:n.failureSummary}))})));
           assert.deepEqual(violations,[],`${width}px ${theme}: visible motion control audit`);
           audits++;
         }
