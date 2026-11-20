@@ -79,7 +79,7 @@ test('light and dark themes share a still layout and consistent design tokens', 
   assert.doesNotMatch(css, /@keyframes|animation:|transform:/);
   for (const name of fs.readdirSync(site).filter(n => n.endsWith('.html') && !n.startsWith('google'))) {
     const html = read(name);
-    assert.ok(html.indexOf('assets/theme.css?v=2') > html.indexOf('assets/style.css?v=2'), name);
+    assert.ok(html.indexOf('assets/theme.css?v=2') > html.indexOf('assets/style.css?v=3'), name);
     assert.doesNotMatch(html, /assets\/light-motion\.css/, name);
   }
 });

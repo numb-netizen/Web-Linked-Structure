@@ -53,6 +53,47 @@ async function checkRoundTrip(page, javaScriptEnabled) {
   assert.equal(await fits(page), true);
 }
 
+
+// Stub the external destination: exercise a real new tab without sending a request to YouTube.
+async function checkChapterVideo(page, javaScriptEnabled) {
+  const video = 'https://youtu.be/7PIx8szWEz4';
+  const fixture = route => route.fulfill({status:200,contentType:'text/html',body:'<!doctype html><title>External lesson fixture</title><p>Video link test only.</p>'});
+  await page.context().route(video, fixture);
+  try {
+    await page.goto(BASE + 'civics.html#civics-introduction');
+    const chapter = page.locator('.chap[data-subject="civics"][data-chapter="0"]');
+    const link = page.locator('.class-tag');
+    assert.equal(await link.getAttribute('href'),video);
+    assert.equal(await link.locator('xpath=ancestor::*[@role="checkbox"]').count(),0);
+    assert.ok(await link.evaluate(el=>el.getBoundingClientRect().height>=44),'lesson has a full-height tap target');
+    assert.equal(await fits(page),true);
+    if (javaScriptEnabled) {
+      await chapter.focus();await page.keyboard.press('Space');
+      assert.equal(await chapter.getAttribute('aria-checked'),'true');
+      await page.keyboard.press('Enter');
+      assert.equal(await chapter.getAttribute('aria-checked'),'false');
+    }
+    const before = javaScriptEnabled ? await page.evaluate(()=>JSON.stringify(Object.entries(localStorage).sort())) : null;
+    const popupPromise = page.context().waitForEvent('page');
+    await link.focus();await page.keyboard.press('Enter');
+    const popup = await popupPromise;await popup.waitForURL(video);await popup.waitForLoadState('domcontentloaded');
+    assert.equal(await popup.evaluate(()=>window.opener),null,'the lesson cannot access its opener');
+    await popup.close();
+    assert.match(page.url(),/civics\.html#civics-introduction$/);
+    if (javaScriptEnabled) {
+      assert.equal(await chapter.getAttribute('aria-checked'),'false','opening the lesson must not tick its chapter');
+      assert.equal(await page.evaluate(()=>JSON.stringify(Object.entries(localStorage).sort())),before,'lesson activation never changes any saved state');
+    }
+    await page.locator('.page-connections a[data-page="classes"]').click();
+    await assertPage(page,/classes\.html#class-civics$/);
+    assert.equal(await page.locator('#class-civics .chapter-video').getAttribute('href'),video);
+    assert.equal(await fits(page),true);
+    await page.locator('#class-civics .resource-subject-link').click();
+    await assertPage(page,/civics\.html$/);
+    if (javaScriptEnabled) assert.equal(await chapter.getAttribute('aria-checked'),'false');
+  } finally {await page.context().unroute(video,fixture);}
+}
+
 (async () => {
   const browser = await chromium.launch({headless:true, executablePath:process.env.CHROME_PATH || '/usr/bin/google-chrome', args:['--no-sandbox']});
   try {
@@ -92,6 +133,7 @@ async function checkRoundTrip(page, javaScriptEnabled) {
         if (width <= 1200) assert.equal(await page.locator('#burger').getAttribute('aria-expanded'), 'false');
       }
       await checkRoundTrip(page, true);
+      await checkChapterVideo(page, true);
       assert.deepEqual(errors, [], `script errors ${width}`);
       await context.close();
     }
@@ -163,6 +205,7 @@ async function checkRoundTrip(page, javaScriptEnabled) {
       assert.equal(await page.locator('#burger').isVisible(), false);
       assert.equal(await page.locator('#navLinks .network-nav-link').isVisible(), true);
       await checkRoundTrip(page, false);
+      await checkChapterVideo(page, false);
       for (const id of subjects) {
         await page.goto(BASE + id + '.html');
         assert.equal(await page.locator('.page-connections a[data-page="tracker"]').isVisible(), true, `static links: ${id}`);
@@ -184,6 +227,6 @@ async function checkRoundTrip(page, javaScriptEnabled) {
     await page.getByRole('searchbox').fill('android');
     assert.equal(await page.locator('#directory-empty').isVisible(), true);
     await context.close();
-    console.log('Web-linked browser checks passed: reciprocal navigation, deep links, saved progress, keyboard, no-JS, mobile, desktop and both themes.');
+    console.log('Web-linked browser checks passed: reciprocal navigation, deep links, saved progress, isolated chapter-video links, keyboard, no-JS, mobile, desktop and both themes.');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

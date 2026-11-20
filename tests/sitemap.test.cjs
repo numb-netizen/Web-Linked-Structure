@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const {execFileSync} = require('node:child_process');
 const site = path.join(__dirname, '..', 'site');
-const base = 'https://hsc2027.de5.net';
+const base = 'https://chugc.cc.cd';
 
 test('sitemap is valid XML with one canonical URL for every public study page', () => {
   const xmlPath = path.join(site, 'sitemap.xml');
@@ -32,7 +32,7 @@ print(json.dumps([x[0].text for x in root]))`;
 test('robots.txt advertises the production sitemap without blocking crawling', () => {
   const robots = fs.readFileSync(path.join(site, 'robots.txt'), 'utf8');
   assert.match(robots, /^User-agent: \*$/m);
-  assert.match(robots, /^Sitemap: https:\/\/hsc2027\.de5\.net\/sitemap\.xml$/m);
+  assert.match(robots, /^Sitemap: https:\/\/chugc\.cc\.cd\/sitemap\.xml$/m);
   assert.doesNotMatch(robots, /^Disallow:\s*\//mi);
 });
 
@@ -46,7 +46,7 @@ test('generator keeps sitemap current and excludes noindex and compatibility pag
   try {
     for (const [file, content] of Object.entries({'index.html':'<h1>Home</h1>', 'public.html':'<h1>Public</h1>', 'new_page.html':'<h1>New</h1>', 'secret.html':'<meta content="noindex" name="robots">', 'bangladesh.html':'<meta name="robots" content="noindex">', 'dabi.html':'retired', 'geography.html':'retired', 'googleb7da7b15e33059e0.html':'verification'})) fs.writeFileSync(path.join(root, file), content);
     const xml = makeSitemap(root);
-    assert.match(xml, /https:\/\/hsc2027\.de5\.net\/public\.html/);
+    assert.match(xml, /https:\/\/chugc\.cc\.cd\/public\.html/);
     assert.match(xml, /new_page\.html/);
     assert.doesNotMatch(xml, /secret\.html|bangladesh\.html|dabi\.html|geography\.html|googleb7da7b15e33059e0\.html/);
     assert.doesNotMatch(xml, /<lastmod>/, 'do not fabricate modification dates');

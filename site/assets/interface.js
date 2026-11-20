@@ -8,6 +8,9 @@
     burger.addEventListener('click', function () {
       var open = links.classList.toggle('open');
       burger.setAttribute('aria-expanded', String(open));
+      // The disclosure follows its links in the DOM: enter them instead of skipping the menu.
+      var firstLink = open && links.querySelector('a');
+      if (firstLink) firstLink.focus();
     });
     links.addEventListener('click', function (event) {
       if (event.target.closest('a')) closeMenu(false);
@@ -22,6 +25,9 @@
       if (event.key === 'Escape') closeMenu(true);
     });
     document.addEventListener('click', function (event) {
+      if (!event.target.closest('nav')) closeMenu(false);
+    });
+    document.addEventListener('focusin', function (event) {
       if (!event.target.closest('nav')) closeMenu(false);
     });
     if (window.matchMedia) {

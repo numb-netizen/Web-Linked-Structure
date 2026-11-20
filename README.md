@@ -9,7 +9,7 @@
 - হালকা reading canvas, নেভি–টিল রং, স্থানীয় **Hind Siliguri** বাংলা ফন্ট এবং একই SVG আইকন সেটে হোম ও ভেতরের ৩৫টি পেজ সাজানো। আগের সংরক্ষিত লাইট/ডার্ক পছন্দ বজায় থাকে; নতুন ব্যবহারকারীর ডিফল্ট লাইট।
 - হোমে বিভাগ, কলেজ বিজ্ঞপ্তি, দরকারি তথ্য, বিষয়ের ডিরেক্টরি ও অনলাইন ক্লাস আলাদা সেকশনে আছে। নেটওয়ার্কের চিত্র native details দিয়ে প্রয়োজনে খোলা যায়।
 - ডিরেক্টরির সার্চ বাংলা নাম ও ইংরেজি URL-নাম (যেমন `physics`) দিয়ে বর্তমান পেজেই ফিল্টার করে; সার্ভারে তথ্য পাঠায় না। JavaScript বন্ধ থাকলে সার্চ/টগল লুকিয়ে সাধারণ লিংক ও মেনু দেখায়।
-- Skip link, keyboard focus, Escape-এ মেনু বন্ধ করা, responsive layout ও reduced-motion সমর্থন আছে। পুরোনো glow, marquee ও চলমান heading/scene আর লোড হয় না; compatibility assets রাখা হয়েছে।
+- Skip link, keyboard focus, Escape-এ মেনু বন্ধ করা, responsive layout ও reduced-motion সমর্থন আছে। পুরোনো glow, marquee ও অনবরত চলমান heading/scene আর লোড হয় না; নতুন মসৃণ text entrance একবার হয়ে থেমে যায়।
 - `site/assets/style.css` মূল design tokens/layout, `theme.css` ডার্ক রং ও `interface.js` মেনু/সার্চ সামলায়। `scripts/site-shell.cjs` থেকে shared header/footer ও `assets/icons.svg` তৈরি হয়; `site-navigation.cjs` সেটি HTML-এ বসায়।
 - ফন্টগুলো `site/assets/fonts/`-এ WOFF2 হিসেবে আছে; লাইসেন্স `OFL.txt`-সহ offline manifest-এ অন্তর্ভুক্ত। ফন্ট/আইকনের জন্য CDN লাগে না। সাইটটি শিক্ষার্থীদের উদ্যোগ, কলেজের আনুষ্ঠানিক ওয়েবসাইট নয়।
 - বাংলা **১** যাতে **৯**-এর মতো অস্পষ্ট না দেখায়, শুধু `০–৯` সংখ্যার জন্য ৩.৮ KB Noto Sans Bengali subset (`numerals.css`) আছে। অক্ষরের আগের ফন্ট ও সব আসল সংখ্যা/ট্র্যাকার key অপরিবর্তিত; নতুন ফন্টের লাইসেন্সও অফলাইনে থাকে। [সংখ্যার ফন্টের উৎস ও তৈরির বিবরণ](docs/bengali-numerals.md)।
@@ -20,9 +20,36 @@
 - **হালকা অ্যানিমেশন** বোতামটি মেনুতে নয়—সব পেজের মূল কনটেন্টে মাঝ বরাবর থাকে। চাপলে পুরো বন্ধ না হয়ে কম ইফেক্টের **হালকা মোড**, আবার চাপলে পূর্ণ মোড হয়। আগের `site:motion-paused` key-ই রাখা হয়েছে: পুরোনো `1` এখন হালকা মোড বোঝায়। পছন্দ reload, অন্য পেজ ও একই origin-এর অন্য tab-এও মেলে। OS-এর reduced motion সবসময় অগ্রাধিকার পেয়ে সব motion থামায়; tab background-এ গেলেও সাময়িক থামে।
 - JavaScript বা নতুন motion script না চললে sky স্থির ও বোতাম লুকানো থাকে। `backdrop-filter` না থাকলে solid panel, reduced-transparency-তে opaque panel থাকে। কোনো WebGL/canvas, animation loop বা বাইরের runtime dependency নেই। `galaxy.css` / `galaxy.js` আলাদা progressive enhancement, পড়ার মূল design অপরিবর্তিত।
 - একই ছবিটি কলেজ পরিচিতির heading-এরও background। স্থানীয় `college-campus.webp` ১০০০×৪০০, প্রায় ১৩৪ KiB; original upload `docs/images/college-campus-original.png`-এ অক্ষত। প্রত্যাখ্যাত gate photo ও সংবাদপত্রের photo credit সরানো হয়েছে। কোনো AI-তৈরি ক্যাম্পাস বা Facebook/CDN hotlink নেই; background app-এর offline manifest-এ আছে। [ছবির উৎস ও rights সংক্রান্ত নোট](docs/college-photo.md); কোনো open-content license বা কলেজের আনুষ্ঠানিক অনুমোদন দাবি করা হয়নি।
-- **পূর্ণ মোডে প্রচুর র‌্যান্ডম অ্যানিমেশন:** তারার কণা, cross-star, shooting-star, floating halo, nebula, star drift ও light sweep। Desktop-এ ১১৮টি ও phone-এ ৬৩টি randomized decoration; অবস্থান, পথ, রং, মাপ, গতি ও phase প্রতি ভিজিটে বদলায়। লেখা, ছবি ও heading স্থির থাকে। CSS animation চলে, JS কোনো frame/timer loop চালায় না; বারবার মোড বা tab বদলালে নতুন node জমে না।
+- **পূর্ণ মোডে প্রচুর র‌্যান্ডম অ্যানিমেশন:** তারার কণা, cross-star, shooting-star, floating halo, nebula, star drift ও light sweep। Desktop-এ ১১৮টি ও phone-এ ৬৩টি randomized decoration; অবস্থান, পথ, রং, মাপ, গতি ও phase প্রতি ভিজিটে বদলায়। ছবি ও layout স্থির থাকে; অধিকাংশ লেখায় একবারের entrance animation আছে, অনবরত দুলতে থাকা heading নয়। Galaxy-তে CSS animation ও লেখায় finite Web Animations API চলে, JS কোনো frame/timer loop চালায় না; বারবার মোড বা tab বদলালে নতুন node জমে না।
 - **পুরোনো ডিভাইসের জন্য হালকা মোড:** desktop-এ ১৮টি, phone-এ ১০টি সহজ চলমান কণা থাকে। বাড়তি node DOM থেকে সরিয়ে দেওয়া হয়, লুকিয়ে বা memory-তে cache করে রাখা হয় না। বড় nebula/star/ribbon, shooting-star/halo, glow/shadow ও blur/backdrop-filter বাদ যায়; কলেজের আসল background ছবিটি থাকে। শুধু গতি ধীর করা নয়—চলমান node ও rendering work সত্যিই কমে। নির্দিষ্ট CPU/GPU/RAM সাশ্রয়ের শতাংশ বা সব ডিভাইসে একই ফল দাবি করা হয়নি।
 - নতুন regression tests: `tests/galaxy-design.test.cjs` ও `tests/galaxy-browser.cjs` — motion preference, cross-tab sync, script/storage failure, no-JS, reduced motion/transparency, responsive layout, স্থানীয় ছবি ও keyboard controls যাচাই করে।
+
+
+## নতুন হোম, তিন বিভাগের রুটিন ও কলেজ পোর্টাল
+
+- হোমের **CAMPUS · GALAXY** badge/box ও চাওয়া slogan সরিয়ে ফরমাল, তিন লাইনের stylish বাংলা heading করা হয়েছে; আপলোড করা কলেজের background আগেরটিই আছে।
+- `routine.html#science`, `#arts`, `#commerce`: আলাদা বিষয়ভিত্তিক দৈনিক সেশন ও সাত দিনের পরিকল্পনা। হোম/বিভাগ/বিষয় থেকে সরাসরি লিংক, keyboard tabs, Back/Forward, no-JS-এ সব রুটিন ও সব বিভাগের print view আছে। এগুলো প্রস্তাবিত ব্যক্তিগত রুটিন, কলেজের অফিসিয়াল সময়সূচি নয়; শুধু নিজের নিবন্ধিত বিষয় অনুসরণ করতে বলা হয়েছে।
+- অধিকাংশ মূল লেখা viewport-এ এলে একবার মসৃণভাবে আসে। পূর্ণ মোডে ৬৫০ ms, হালকায় ২৬০ ms/কম দূরত্ব ও কম concurrent effect; OS reduced-motion মানে স্থির লেখা। কনটেন্ট অপেক্ষা করতে গিয়ে লুকানো থাকে না। একই in-content **হালকা অ্যানিমেশন** control কাজ করে; নতুন storage key নেই।
+- পুরোনো কলেজ সাইটে **এখন বন্ধ** (ব্যবহারকারীর জানানো বর্তমান অবস্থা), পাশে **[eShiksa শিক্ষার্থী পোর্টাল](https://chugc.eshiksaems.com/)**। কোনো পাসওয়ার্ড পাবলিক কোড/URL-এ বা এই সাইটে রাখা হয় না; লগইন পোর্টালেই করতে হবে।
+- রক্ষণাবেক্ষণ ও নিরাপত্তা/compatibility সীমা: [docs/site-updates.md](docs/site-updates.md)।
+
+## ফুটারে আলাদা কৃতিত্ব ও পরিচালনার পরিচয়
+
+- বাম পাশে **Requested by — Mahadin** / **Concept & information**, ডান পাশে **Built & managed by — Morshed** / **Site owner**। সব shared পেজে একই দুই কলাম, ফোনেও পাশাপাশি থাকে; কোনো নতুন profile link বা account যোগ হয়নি।
+- `scripts/site-shell.cjs` থেকে markup তৈরি হয়। আগের credit group-এর স্বয়ংক্রিয় লুকানোর মেয়াদ এবং ICT নোটের আলাদা মেয়াদ অপরিবর্তিত; `credit.js` এখন `defer` দিয়ে দুই নোট DOM-এ আসার পর চলে। JavaScript না চললে দুই পরিচয় সাধারণ HTML হিসেবেই থাকে।
+
+## Temp থেকে নির্বাচিত তথ্য হালনাগাদ
+
+- `Temp`-এর `933cbab` snapshot থেকে পৌরনীতি ১ম পত্রের ১ম অধ্যায়ের **Unique e School / মিসকাত স্যার**-এর ক্লাস লিংক বিষয়পেজ ও অনলাইন ক্লাসের তালিকায় যোগ হয়েছে। ভিডিওর বোতাম checkbox-এর বাইরে, তাই ক্লাস খুললে অধ্যায়ের টিক বদলায় না।
+- আটটি বিষয়ের পুরোনো “কী পরিবর্তন হয়েছে” বক্স সরেছে; অধ্যায়, tracker key ও বোর্ড/পাঠ্যবইয়ের সূত্র এবং প্রয়োজনীয় সতর্কতা রাখা আছে। বর্তমান বাংলা MCQ, সঠিক সাহিত্যধরনের লেবেল ও নতুন ডিজাইন/রুটিন আগের মতোই আছে।
+- এটি পুরো repo কপি বা স্বয়ংক্রিয় sync নয়; সূত্র, আনা/না-আনা পরিবর্তন ও পরীক্ষার বিবরণ: [docs/temp-content-sync.md](docs/temp-content-sync.md)।
+
+## বাংলা ১ম পত্রের MCQ অনুশীলন
+
+- `bangla.html#bangla-mcq`-তে **MCQ টেস্ট দাও**: অধ্যায়, প্রশ্নের ধরন, প্রশ্নসংখ্যা ও সময় বেছে সরাসরি উত্তর দেওয়া যায়। শেষে নম্বর, সঠিক উত্তর, ব্যাখ্যা ও উৎস দেখা যায়; ভুল/বাদ দেওয়া প্রশ্ন আবার দেওয়া যায়।
+- ছয় খণ্ড ব্যবহারকারী-প্রদত্ত স্ক্যান থেকে নির্বাচিত/অভিযোজিত **১০৪টি** ও আলাদা চিহ্নিত নতুন **২৬টি AI-রচিত** প্রশ্ন, মোট ২৬ অধ্যায়ে ১৩০টি। এটি পূর্ণ প্রশ্নব্যাংক বা বোর্ড-অনুমোদিত মডেল টেস্ট নয়।
+- একই প্রশ্নসেটের script-free, print-friendly শিট ও CSV আছে। টেস্টের উত্তর বা নম্বর কোথাও পাঠানো/সংরক্ষণ হয় না; কোনো account, API বা নতুন runtime dependency নেই। বাংলা পেজেই দেওয়া playlist-এর **সম্পূর্ণ বিষয়ের ওয়ান শট ক্লাস** বোতাম আছে।
+- প্রশ্ন সম্পাদনা, এক উৎস থেকে export তৈরি, Google Sheet-এর snapshot ও পরীক্ষার নির্দেশনা: [docs/bangla-mcq.md](docs/bangla-mcq.md)।
 
 ## ওয়েবসাইটের কাঠামো (Web-linked / Network Structure)
 
@@ -39,7 +66,7 @@
 - প্রতিটি প্রকাশ্য উপপেজের **এই পেজের সংযোগ** অংশে সম্পর্কিত বিষয়, বিভাগ, পড়ার টুল ও প্রাসঙ্গিক তথ্যের পারস্পরিক লিংক আছে। দীর্ঘ তালিকা খোলা/বন্ধ করা যায়।
 - বাংলা, English-এর দুই পত্র ও ICT একই পেজ ব্যবহার করে তিন বিভাগে যুক্ত; বিভাগভিত্তিক আলাদা কপি নয়। অর্থনীতি মানবিকেই আছে, ব্যবসায় শিক্ষার তালিকায় নয়।
 - বিষয় থেকে ক্লাস ও ট্র্যাকারের সংশ্লিষ্ট কার্ডে সরাসরি যাওয়া যায়; কার্ডে বিষয়ের পেজে ফেরার লিংকও আছে। নির্দিষ্ট আগের/পরের বিষয়ের বাধ্যতামূলক ক্রম নেই।
-- Breadcrumb শুধু বিষয়ের অবস্থান বুঝতে সাহায্য করে, বাধ্যতামূলক যাতায়াতের পথ নয়। পুরোনো URL, canonical ও tracker storage key অপরিবর্তিত। সরানো/পুরোনো compatibility পেজগুলো নেটওয়ার্কের বাইরে থাকে।
+- Breadcrumb শুধু বিষয়ের অবস্থান বুঝতে সাহায্য করে, বাধ্যতামূলক যাতায়াতের পথ নয়। বিদ্যমান HTML ফাইলের নাম ও tracker storage key অপরিবর্তিত; নতুন public origin `https://chugc.cc.cd` অনুযায়ী canonical হালনাগাদ। সরানো/পুরোনো compatibility পেজগুলো নেটওয়ার্কের বাইরে থাকে।
 - নেভিগেশন সাধারণ HTML লিংকে তৈরি: JavaScript বা API ছাড়াই এবং Android/desktop-এর offline snapshot-এ চলে। অনলাইন ভিডিও ও বাইরের সেবায় ইন্টারনেট লাগে।
 
 ### নেভিগেশনের ফাইল ও রক্ষণাবেক্ষণ
@@ -61,7 +88,9 @@ node --test tests/*.test.cjs
 
 `node scripts/site-shell.cjs --check` স্থানীয় আইকন সেট এবং `node scripts/site-navigation.cjs --check` ফাইল না বদলে নেভিগেশন/shared shell হালনাগাদ আছে কি না যাচাই করে। পরীক্ষা ও Pages deployment-এ এই যাচাই চলে। Generated HTML রিপোতেই থাকে, তাই শুধু `site/` সার্ভ করলেই সাইট চলে।
 
-Browser পরীক্ষাগুলো: `tests/android-browser.cjs`, `tests/web-linked-browser.cjs`, `tests/galaxy-browser.cjs` ও `tests/accessibility-browser.cjs`। শেষটি axe-core 4.10.3 দিয়ে ১৪ ধরনের পেজে mobile/desktop ও light/dark মিলিয়ে ৫৬টি targeted audit চালায়; galaxy suite-এ পেজের ভেতরের control-সহ পূর্ণ ও হালকা মোডে আরও ৮টি audit আছে। এগুলো পূর্ণ manual accessibility certification নয়। CI test-only `playwright-core` ও `axe-core` ইনস্টল করে এবং port 8765-এ static site সার্ভ করে।
+Browser পরীক্ষাগুলো: `tests/android-browser.cjs`, `tests/web-linked-browser.cjs`, `tests/galaxy-browser.cjs`, `tests/text-motion-browser.cjs`, `tests/study-routines-browser.cjs`, `tests/bangla-mcq-browser.cjs` ও `tests/accessibility-browser.cjs`। শেষটি axe-core 4.10.3 দিয়ে সব **৩৫টি পেজে mobile/desktop ও light/dark মিলিয়ে ১৪০টি audit**, সঙ্গে MCQ sheet, খোলা মেনু, storage fallback ও footer credits মিলিয়ে **১৫৬টি audit** চালায়। শুধু WCAG-tagged নিয়ম নয়—default heading/landmark নিয়ম এবং WCAG 2.2 target-size-ও চালু থাকে। সব পেজে keyboard skip link, ৩২০/৭২০ px reflow, text spacing, প্রকৃত no-JS fallback, tracker storage ব্যর্থতা ও footer-এর স্বাধীন মেয়াদও পরীক্ষা হয়।
+
+বাংলা MCQ suite-এ চার স্ক্রিনসাইজে light/dark অনুশীলন ও ১৭টি audit, study routines-এ blocked-script fallback-সহ ১৪টি এবং galaxy পূর্ণ/হালকা control-এ আরও ৮টি audit আছে—সব মিলিয়ে **১৯৫টি automated accessibility audit**। এগুলো পূর্ণ manual accessibility certification নয়; gradient/photo-র inconclusive ফল আলাদা review দরকার। [Accessibility review ও সীমাবদ্ধতা](docs/accessibility-review.md) দেখুন। CI pull request ও push-এ সাতটি suite চালায়, test-only `playwright-core`/`axe-core` ইনস্টল করে, port 8765-এ static site সার্ভ করে এবং accessibility report সংরক্ষণ করে।
 
 
 ## ফিচারসমূহ
@@ -69,22 +98,21 @@ Browser পরীক্ষাগুলো: `tests/android-browser.cjs`, `tests/w
 - ⏳ সম্ভাব্য পরীক্ষার তারিখের লাইভ কাউন্টডাউন (সংবাদভিত্তিক, চূড়ান্ত নয়)
 - 🕸️ হোমে Web-linked নেটওয়ার্ক ও সব বিষয়ের সরাসরি লিংক
 - 📚 বিষয়পেজ — নির্বাচিত প্রস্তুতির চেকলিস্ট; বাংলা ২য় পত্রে দেওয়া ছবিভিত্তিক নির্বাচিত প্রস্তুতি; পূর্ণ তালিকা যাচাই বাকি
-- ✅ অধ্যায় ট্র্যাকার — অগ্রগতি ব্রাউজারে অটো-সেভ হয়
+- ✅ অধ্যায় ট্র্যাকার — স্টোরেজ ব্যবহার করা গেলে অগ্রগতি ব্রাউজারে অটো-সেভ হয়; ব্যর্থ হলে সতর্কতাসহ বর্তমান পেজে টিক দেওয়া যায়
 - 🎥 অনলাইন ক্লাস — 10 Minute School, Shikho ও সাবজেক্টভিত্তিক YouTube ক্লাস
-- 🕐 দৈনন্দিন স্টাডি রুটিন
+- 🕐 বিজ্ঞান, মানবিক ও ব্যবসায় শিক্ষার আলাদা দৈনিক/সাপ্তাহিক স্টাডি রুটিন
 - 💬 শিক্ষার্থী গ্রুপ — নিজের দেওয়া উত্তরের ভিত্তিতে গ্রুপের তথ্য দেখা যায়; পরিচয় যাচাই করা হয় না।
 
 ## GitHub Pages ও কাস্টম ডোমেইন সেটআপ
 
-এই রিপোর `.github/workflows/pages.yml` শুধু `site/` ফোল্ডারকে সাইটের root হিসেবে প্রকাশ করে। প্রথমে workflow-টি `main` ব্রাঞ্চে মার্জ করতে হবে।
+এই রিপোর **একমাত্র Pages publisher** `.github/workflows/pages.yml` শুধু `site/`-এর কনটেন্ট সাইটের root হিসেবে প্রকাশ করে। আগে পুরো রিপো প্রকাশ করা `static.yml` ও repo-root Jekyll workflow একই deployment overwrite করায় `/site/` লাগত; ওই দুই workflow বাদ দেওয়া হয়েছে।
 
-1. রিপো → **Settings → Pages → Build and deployment** → Source হিসেবে **GitHub Actions** বেছে নিন। GitHub Pages ব্রাঞ্চ থেকে প্রকাশের ক্ষেত্রে `/site` ফোল্ডার বেছে নেওয়ার সুবিধা নেই।
-2. **Actions → Deploy HSC site to GitHub Pages → Run workflow** থেকে `main` ব্রাঞ্চে workflow চালান এবং সফল হওয়া পর্যন্ত অপেক্ষা করুন। `main`-এ পরবর্তী push-এ এটিও নিজে চলবে।
-3. **Settings → Pages → Custom domain**-এ `hsc2027.de5.net` লিখে Save করুন। ডোমেইনটি আপনার নিয়ন্ত্রণে থাকতে হবে; সম্ভব হলে GitHub account settings থেকে domain verification করুন।
-4. আপনার ডোমেইন/DNS প্রদানকারীর প্যানেলে `hsc2027.de5.net`-এর জন্য একটি **CNAME** রেকর্ড তৈরি করুন, যার target `numb-netizen.github.io` (URL বা `/Temp/site/` নয়)। যদি DNS zone হয় `de5.net`, host হবে `hsc2027`; আর যদি zone নিজেই `hsc2027.de5.net` হয়, host সাধারণত `@`। একই hostname-এ বিরোধপূর্ণ রেকর্ড থাকলে DNS প্রদানকারীর নির্দেশনা অনুসারে সরান।
-5. DNS check পাস হলে **Enforce HTTPS** চালু করুন। DNS পরিবর্তন ও সার্টিফিকেট তৈরি হতে কিছু সময় লাগতে পারে। তারপর https://hsc2027.de5.net/ দেখুন।
+1. রিপো → **Settings → Pages → Build and deployment** → Source **GitHub Actions** রাখুন।
+2. **Actions → Deploy HSC site to GitHub Pages → Run workflow** থেকে `main`-এ চালান। `main`-এ পরবর্তী push-এও একই workflow চলবে; নতুন কোড আগে main-এ পৌঁছাতে হবে।
+3. **Custom domain:** `chugc.cc.cd`; DNS-এ host-টি `numb-netizen.github.io`-এর দিকে নির্দেশ করবে—URL বা `/Web-Linked-Structure/site/` নয়। DNS provider-এর zone অনুযায়ী record/host নির্ধারণ করুন।
+4. DNS ও certificate check পাস হলে **Enforce HTTPS** চালু রাখুন। সঠিক ঠিকানা **https://chugc.cc.cd/**, শেষে `/site/` নয়। `site/CNAME` একা DNS বা Pages settings বদলায় না।
 
-GitHub Actions deployment-এর পর কাস্টম ডোমেইন ছাড়া ডিফল্ট project URL-এ সাইটের root হবে `https://numb-netizen.github.io/Temp/`, আগের `/Temp/site/` নয়। `site/CNAME` ফাইল একা ডোমেইনের DNS বা Pages সেটিংস পরিবর্তন করে না।
+কাস্টম ডোমেইন ছাড়া project URL `https://numb-netizen.github.io/Web-Linked-Structure/`। পুরোনো `/site/` entry-তে শুধু মূল সাইটে যাওয়ার noindex redirect আছে; সম্পূর্ণ সাইটের আরেক কপি নয়। Public origin, native storage compatibility ও deployment regression-এর বিস্তারিত: [docs/site-updates.md](docs/site-updates.md)।
 
 ## সার্চ ইঞ্জিন sitemap
 
@@ -94,8 +122,8 @@ GitHub Actions deployment-এর পর কাস্টম ডোমেইন �
 
 ### Google ও Bing-এ নিবন্ধন
 
-1. [Google Search Console](https://search.google.com/search-console/) খুলে নিজের Google অ্যাকাউন্টে **Add property → URL prefix**-এ `https://hsc2027.de5.net/` দিন। HTML-file পদ্ধতিতে আপনার অ্যাকাউন্টের জন্য দেওয়া ফাইল লাগবে। রিপোতে থাকা `googleb7da7b15e33059e0.html` কেবল যে অ্যাকাউন্টের জন্য ইস্যু হয়েছে সেটির যাচাইয়ে কাজে লাগবে; অন্য অ্যাকাউন্টের জন্য আলাদা ফাইল লাগতে পারে। নির্দেশনা: [Google ownership verification](https://support.google.com/webmasters/answer/9008080)।
-2. মালিকানা যাচাই হলে **Sitemaps**-এ `https://hsc2027.de5.net/sitemap.xml` জমা দিন। **URL inspection** দিয়ে হোমপেজ পরীক্ষা ও প্রয়োজনে indexing request করা যায়। জমা দেওয়া সফল ও index হওয়া আলাদা বিষয়।
+1. [Google Search Console](https://search.google.com/search-console/) খুলে নিজের Google অ্যাকাউন্টে **Add property → URL prefix**-এ `https://chugc.cc.cd/` দিন। HTML-file পদ্ধতিতে আপনার অ্যাকাউন্টের জন্য দেওয়া ফাইল লাগবে। রিপোতে থাকা `googleb7da7b15e33059e0.html` কেবল যে অ্যাকাউন্টের জন্য ইস্যু হয়েছে সেটির যাচাইয়ে কাজে লাগবে; অন্য অ্যাকাউন্টের জন্য আলাদা ফাইল লাগতে পারে। নির্দেশনা: [Google ownership verification](https://support.google.com/webmasters/answer/9008080)।
+2. মালিকানা যাচাই হলে **Sitemaps**-এ `https://chugc.cc.cd/sitemap.xml` জমা দিন। **URL inspection** দিয়ে হোমপেজ পরীক্ষা ও প্রয়োজনে indexing request করা যায়। জমা দেওয়া সফল ও index হওয়া আলাদা বিষয়।
 3. [Bing Webmaster Tools](https://www.bing.com/webmasters/) থেকে সাইট যোগ ও যাচাই করুন, অথবা আগে যাচাই করা Search Console property [import করুন](https://blogs.bing.com/webmaster/2019/9/Import-sites-from-Search-Console-to-Bing-Webmaster-Tools/)। এরপর Sitemaps-এ একই URL জমা দিন। আগের `BingSiteAuth.xml` ফাইলও নির্দিষ্ট যাচাইয়ের জন্য; অ্যাকাউন্টে যাচাই সম্পন্ন হয়েছে কি না নিজে দেখুন।
 4. নতুন পেজ যোগ করলে নির্ভুল বিষয়ভিত্তিক title ও description, canonical এবং হোম থেকে সাধারণ HTML লিংক দিন; `node --test tests/seo.test.cjs` ও sitemap check চালান। যাচাই ফাইল নিজের অ্যাকাউন্ট অনুযায়ী না বদলে সরাবেন না।
 
@@ -132,7 +160,7 @@ Android 1.2 beta থেকে আমাদের WebView একটি সাধ�
 
 ### অফলাইন সাইট ও আপডেট
 
-Pages workflow প্রতিবার deploy করার সময় `scripts/offline-manifest.cjs` দিয়ে ফাইলের SHA-256 তালিকা তৈরি করে। Android অ্যাপ শুধু মূল HTTPS সাইট থেকে ওই তালিকা ও ফাইল ডাউনলোড করে; সম্পূর্ণ সেটের আকার ও প্রতিটি hash যাচাইয়ের পরই ব্যবহারকারীকে নতুন তথ্য চালু করার বোতাম দেখায়। সংযোগ বা যাচাই ব্যর্থ হলে পুরোনো সম্পূর্ণ কপি চালু থাকে। অন্তর্নির্মিত এবং হালনাগাদ পেজ একই `https://hsc2027.de5.net` origin ব্যবহার করে, যাতে একই ইনস্টলেশনের স্থানীয় tracker storage থাকে; কোনো গোপন key অ্যাপে রাখা হয় না। অ্যাপের ভিন্ন signing key হলে পুরোনো অ্যাপ আনইনস্টল করতে হতে পারে, যা তার স্থানীয় ট্র্যাকার ডেটা মুছে দেয়।
+Pages workflow প্রতিবার deploy করার সময় `scripts/offline-manifest.cjs` দিয়ে ফাইলের SHA-256 তালিকা তৈরি করে। Android অ্যাপ শুধু মূল HTTPS সাইট থেকে ওই তালিকা ও ফাইল ডাউনলোড করে; সম্পূর্ণ সেটের আকার ও প্রতিটি hash যাচাইয়ের পরই ব্যবহারকারীকে নতুন তথ্য চালু করার বোতাম দেখায়। সংযোগ বা যাচাই ব্যর্থ হলে পুরোনো সম্পূর্ণ কপি চালু থাকে। নতুন build-এ remote update `https://chugc.cc.cd/` থেকে আসে; অন্তর্নির্মিত এবং হালনাগাদ পেজ ইচ্ছাকৃতভাবে একই পুরোনো intercepted offline `https://hsc2027.de5.net` origin ব্যবহার করে, যাতে একই ইনস্টলেশনের স্থানীয় tracker storage থাকে; কোনো গোপন key অ্যাপে রাখা হয় না। অ্যাপের ভিন্ন signing key হলে পুরোনো অ্যাপ আনইনস্টল করতে হতে পারে, যা তার স্থানীয় ট্র্যাকার ডেটা মুছে দেয়।
 
 ## Windows ও Linux ডেস্কটপ অ্যাপ (beta)
 

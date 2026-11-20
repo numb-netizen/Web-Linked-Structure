@@ -1,0 +1,53 @@
+/* Formal editorial accents; all motion is a finite progressive enhancement. */
+.hero .hero-overline{display:flex;align-items:center;gap:12px;margin:0 0 18px;color:#d1e4da;font-size:12px;font-weight:500;letter-spacing:.03em}
+.hero-overline::before{content:"";width:32px;height:1px;background:#d5c49a;flex:none}
+.hero .hero-title{margin:0 0 24px;line-height:1.24;letter-spacing:-.02em;font-weight:600;text-shadow:0 2px 18px #071f2940}
+.hero-title>span{display:block;width:fit-content;max-width:100%}
+.hero .hero-title-lead{font-size:clamp(33px,3.45vw,49px);color:#f2f7f2;margin-bottom:3px}
+.hero .hero-title-emphasis{position:relative;font-size:clamp(50px,5.7vw,81px);font-weight:700;letter-spacing:-.035em;line-height:1.32;color:#d9edda;padding-bottom:9px}
+.hero-title-emphasis::after{content:"";position:absolute;left:2px;bottom:7px;width:62%;height:2px;background:linear-gradient(90deg,#d7c695,transparent)}
+.hero .hero-title-closing{font-size:clamp(21px,2.03vw,29px);font-weight:500;letter-spacing:0;line-height:1.55;color:#e0eae2;margin-top:8px}
+.hero .hero-copy{padding-bottom:5px}
+.hero .hero-grid{padding-bottom:43px}
+.hero .hero-quick-links{margin-top:26px}
+.college-portal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.college-portal{display:flex;flex-direction:column;align-items:flex-start;min-width:0;border:1px solid var(--line);border-radius:13px;padding:29px 30px;background:var(--panel);box-shadow:var(--shadow)}
+.college-portal--student{border-top:3px solid var(--green2)}
+.college-portal-top{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px;color:var(--green2)}
+.college-portal-top>.icon{width:29px;height:29px}
+.portal-status{font-size:12px;line-height:1.6;padding:5px 11px;border:1px solid var(--line);border-radius:99px;background:var(--accent-soft);color:var(--green2);font-weight:600}
+.portal-status--closed{color:var(--red);background:var(--panel);border-color:currentColor}
+.college-portal h3{font-size:23px;margin:0 0 7px}
+.college-portal p{color:var(--muted);font-size:15px;line-height:1.9;max-width:60ch}
+.college-portal .portal-domain{font:12px/1.6 Arial,sans-serif;overflow-wrap:anywhere;margin:0 0 18px;color:var(--green2)}
+.college-portal .btn{margin-top:auto;max-width:100%;font-size:14px;text-align:left;white-space:normal}
+.college-portal small{font-size:12px;color:var(--muted);margin-top:12px}
+.portal-original-link{display:inline-flex;align-items:center;gap:8px;margin-top:auto;font-size:14px;min-height:44px;color:var(--muted);text-decoration:underline;text-underline-offset:4px}
+.portal-availability-note{color:var(--muted);font-size:12px;line-height:1.9;max-width:105ch;margin:16px 0 0}
+.college-page>.wrap>.college-portals{padding:38px 0}
+.college-page .college-portals>.wrap{width:100%}
+.college-page .college-portals .title{font-size:29px}
+@media(max-width:760px){.hero .hero-title-lead{font-size:clamp(31px,6.8vw,44px)}.hero .hero-title-emphasis{font-size:clamp(49px,10.8vw,68px)}.hero .hero-title-closing{font-size:clamp(20px,4.4vw,27px)}.hero .hero-overline{font-size:10px;gap:9px;margin-bottom:19px}.hero-overline::before{width:23px}.hero .hero-title{margin-bottom:23px}.hero .hero-grid{padding-bottom:31px}.college-portal-grid{grid-template-columns:1fr;gap:18px}.college-portal{padding:24px 21px}.college-portal h3{font-size:21px}.college-page .college-portals .title{font-size:25px}}
+.routine-preview{padding:33px 0 38px;border-block:1px solid var(--line);background:var(--panel)}
+.routine-preview-heading{display:flex;align-items:center;justify-content:space-between;gap:30px;margin-bottom:22px}
+.routine-preview-heading .eyebrow{margin:0 0 7px}
+.routine-preview-heading h2{font-size:27px;margin:0;line-height:1.5}
+.routine-preview-heading>p{font-size:14px;line-height:1.9;color:var(--muted);max-width:39ch;margin:0}
+.routine-preview-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.routine-preview-links a{display:flex;align-items:center;gap:13px;min-width:0;min-height:62px;padding:15px 20px;border:1px solid var(--line);border-radius:9px;background:var(--bg);font-size:17px;font-weight:500;color:var(--text)}
+.routine-preview-links .icon{color:var(--green2);width:21px;height:21px;flex:none}
+.routine-preview-links .icon:last-child{margin-left:auto;width:17px;height:17px}
+.routine-preview-links a:hover{border-color:var(--green2);background:var(--accent-soft)}
+.department-routine{margin:22px 0 0;max-width:100%}
+.department-routine a{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:9px 15px;border:1px solid var(--line);border-radius:8px;background:var(--accent-soft);font-size:14px;line-height:1.85;color:var(--green2)}
+.department-routine .icon{width:18px;height:18px;flex:none}
+@media(max-width:760px){.routine-preview-heading{align-items:flex-start;flex-direction:column;gap:12px}.routine-preview-heading h2{font-size:25px}.routine-preview-links{grid-template-columns:1fr;gap:10px}.routine-preview-links a{min-height:58px;font-size:16px;padding:14px 18px}.department-routine a{align-items:flex-start;gap:8px;font-size:13px;padding:10px 12px}.department-routine .icon{margin-top:3px}}
+/* An external lesson is a sibling of the chapter checkbox, never part of its click target. */
+.chap-row{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);scroll-margin-top:calc(var(--header-height) + 22px)}
+.chap-row>.chap{flex:1;min-width:0;border-bottom:0}
+.class-tag{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:none;min-height:44px;padding:8px 13px;border:1px solid var(--green2);border-radius:6px;background:var(--accent-soft);color:var(--green2);font-size:13px;font-weight:600;line-height:1.7;text-decoration:none;white-space:nowrap}
+.class-tag>.icon{width:16px;height:16px}
+.class-tag:hover{background:var(--bg2)}
+@media(max-width:600px){.chap-row{flex-direction:column;align-items:stretch;gap:0;padding-bottom:11px}.chap-row>.class-tag{align-self:flex-start;margin-left:35px}}
+@media(prefers-reduced-motion:reduce){.hero-title>span{transform:none!important;opacity:1!important}}
+@media print{.skip-link{display:none!important}main h1,main h2,main h3,main h4,main p,main li,main .btn,main .hero-title>span,main .stat b,main .stat span,main .dabi-teaser-copy>strong,main .dabi-teaser-copy>small,main .go{transform:none!important;opacity:1!important;animation:none!important;transition:none!important}.college-portal{box-shadow:none;break-inside:avoid}}

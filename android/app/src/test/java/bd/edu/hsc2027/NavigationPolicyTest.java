@@ -8,6 +8,12 @@ public class NavigationPolicyTest {
         assertEquals(NavigationPolicy.Destination.INTERNAL, NavigationPolicy.destination(NavigationPolicy.HOME));
         assertEquals(NavigationPolicy.Destination.INTERNAL, NavigationPolicy.destination("https://HSC2027.DE5.NET:443/dabi.html#support"));
     }
+    @Test public void newPublicRootDoesNotChangeExistingOfflineStorage() {
+        assertEquals("https://hsc2027.de5.net/", NavigationPolicy.HOME);
+        assertEquals("https://chugc.cc.cd/", NavigationPolicy.UPDATE_HOME);
+        assertEquals(NavigationPolicy.Destination.EXTERNAL, NavigationPolicy.destination(NavigationPolicy.UPDATE_HOME));
+        assertEquals(NavigationPolicy.Destination.EXTERNAL, NavigationPolicy.destination("https://chugc.eshiksaems.com/"));
+    }
     @Test public void externalLinksOpenOutside() {
         assertEquals(NavigationPolicy.Destination.EXTERNAL, NavigationPolicy.destination("https://wa.me/8801974500165"));
         assertEquals(NavigationPolicy.Destination.EXTERNAL, NavigationPolicy.destination("https://www.youtube.com/results?search_query=HSC"));

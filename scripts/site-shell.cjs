@@ -61,6 +61,7 @@ function renderHeader(id) {
 }
 function renderFooter() {
   return `<footer>
+  <h2 class="sr-only">সাইটের লিংক ও যোগাযোগ</h2>
   <div class="wrap">
     <div class="footer-heading"><span class="footer-kicker" lang="en">LEARN WITH PURPOSE.</span><a href="index.html#structure">পড়ার সব পেজ ${icon('arrow')}</a></div>
     <div class="foot">
@@ -69,18 +70,21 @@ function renderFooter() {
         <p>চুনারুঘাট সরকারি কলেজের HSC ব্যাচ ২০২৭-এর শিক্ষার্থীদের জন্য একটি সহজ ও সুসংগঠিত স্টাডি প্ল্যাটফর্ম।</p>
         <span class="student-initiative">শিক্ষার্থীদের উদ্যোগ · কলেজের আনুষ্ঠানিক ওয়েবসাইট নয়</span>
       </div>
-      <div><h4>একাডেমিক বিভাগ</h4><a href="science.html">বিজ্ঞান বিভাগ</a><a href="arts.html">মানবিক বিভাগ</a><a href="commerce.html">ব্যবসায় শিক্ষা</a><a href="teachers.html">শিক্ষক পরিচিতি</a></div>
-      <div><h4>পড়াশোনা ও সহায়তা</h4><a href="classes.html">অনলাইন ক্লাস</a><a href="tracker.html">অধ্যায় ট্র্যাকার</a><a href="routine.html">স্টাডি রুটিন</a><a href="feedback.html">মতামত ও সমস্যা জানাও</a><a href="android-app.html">অ্যাপ ডাউনলোড</a></div>
+      <div><h3>একাডেমিক বিভাগ</h3><a href="science.html">বিজ্ঞান বিভাগ</a><a href="arts.html">মানবিক বিভাগ</a><a href="commerce.html">ব্যবসায় শিক্ষা</a><a href="teachers.html">শিক্ষক পরিচিতি</a></div>
+      <div><h3>পড়াশোনা ও সহায়তা</h3><a href="classes.html">অনলাইন ক্লাস</a><a href="tracker.html">অধ্যায় ট্র্যাকার</a><a href="routine.html">স্টাডি রুটিন</a><a href="feedback.html">মতামত ও সমস্যা জানাও</a><a href="android-app.html">অ্যাপ ডাউনলোড</a></div>
       <div class="contact-info" id="contact">
-        <h4>যোগাযোগ</h4>
+        <h3>যোগাযোগ</h3>
         <p>WhatsApp: <span dir="ltr">+880 1974-500165</span></p>
         <a class="contact-whatsapp" href="https://wa.me/8801974500165" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp-এ Mahadin-কে মেসেজ পাঠাও">WhatsApp-এ মেসেজ ${icon('external')}</a>
         <p>ইউজারনেম: <span dir="ltr">@Mahadin321</span></p>
       </div>
     </div>
     <div class="copy"><span>© <span id="year"></span> HSC 2027 · চুনারুঘাট সরকারি কলেজ</span><span>নিজের গতিতে শিখুন, একসঙ্গে এগিয়ে চলুন।</span></div>
-    <p class="temporary-credit" id="temporary-credit">Made by <strong>Mahadin &amp; Morshed</strong></p>
-    <script src="assets/credit.js?v=20261119"></script>
+    <div class="temporary-credit footer-credits" id="temporary-credit" role="group" aria-label="Site credits" lang="en">
+      <p class="credit-person"><span class="credit-role">Requested by</span><strong class="credit-name">Mahadin</strong><span class="credit-detail">Concept &amp; information</span></p>
+      <p class="credit-person credit-person--owner"><span class="credit-role">Built &amp; managed by</span><strong class="credit-name">Morshed</strong><span class="credit-detail">Site owner</span></p>
+    </div>
+    <script src="assets/credit.js?v=20261119" defer></script>
     <p class="ict-inspiration" id="ict-inspiration">ICT চতুর্থ অধ্যায় থেকে অনুপ্রাণিত হয়ে বানানো</p>
   </div>
 </footer>`;
@@ -118,18 +122,23 @@ function withShell(id, html) {
   next = next.replace(/^.*assets\/(?:heading-motion|light-motion|motion|home-motion|subject-scene)\.(?:css|js)[^\n]*\n/gm, '');
   next = next.replace(/<div class="blob b[123]"><\/div>/g, '');
   next = next.replace(/ data-scene="[^"]+"/g, '');
-  next = next.replace(/(assets\/(?:style|theme)\.(?:css|js))\?v=[^"<>]+/g, '$1?v=2');
+  next = next.replace(/(assets\/style\.css)\?v=[^"<>]+/g, '$1?v=3');
+  next = next.replace(/(assets\/theme\.(?:css|js))\?v=[^"<>]+/g, '$1?v=2');
   next = next.replace(/(assets\/(?:college-details|teachers|student-group|android-download|feedback)\.css)(?:\?v=[^"<>]+)?/g, '$1?v=3');
-  next = next.replace(/(assets\/app\.js)\?v=[^"<>]+/g, '$1?v=20261119-formal');
+  next = next.replace(/(assets\/app\.js)\?v=[^"<>]+/g, '$1?v=20261119-accessibility');
   next = next.replace(/\n?<script src="assets\/interface\.js[^"<>]*"><\/script>/g, '');
-  next = next.replace(/(<script src="assets\/app\.js[^"<>]*"><\/script>)/, '$1\n<script src="assets/interface.js?v=1"></script>');
+  next = next.replace(/(<script src="assets\/app\.js[^"<>]*"><\/script>)/, '$1\n<script src="assets/interface.js?v=2"></script>');
   next = next.replace(/<meta name="theme-color" content="[^"]+">/, '<meta name="theme-color" content="#f8f9fb">');
   next = next.replace(/\n?<link rel="stylesheet" href="assets\/galaxy\.css[^"<>]*">/g, '');
-  next = next.replace(/(<link rel="stylesheet" href="assets\/theme\.css[^"<>]*">)/, '$1\n<link rel="stylesheet" href="assets/galaxy.css?v=3">');
+  next = next.replace(/(<link rel="stylesheet" href="assets\/theme\.css[^"<>]*">)/, '$1\n<link rel="stylesheet" href="assets/galaxy.css?v=4">');
   next = next.replace(/\n?<link rel="stylesheet" href="assets\/numerals\.css[^"<>]*">/g, '');
   next = next.replace(/(<link rel="stylesheet" href="assets\/galaxy\.css[^"<>]*">)/, '$1\n<link rel="stylesheet" href="assets/numerals.css?v=1">');
+  next = next.replace(/\n?<link rel="stylesheet" href="assets\/editorial\.css[^"<>]*">/g, '');
+  next = next.replace(/(<link rel="stylesheet" href="assets\/numerals\.css[^"<>]*">)/, '$1\n<link rel="stylesheet" href="assets/editorial.css?v=1">');
   next = next.replace(/\n?<script src="assets\/galaxy\.js[^"<>]*"><\/script>/g, '');
   next = next.replace(/(<script src="assets\/interface\.js[^"<>]*"><\/script>)/, '$1\n<script src="assets/galaxy.js?v=3"></script>');
+  next = next.replace(/\n?<script src="assets\/text-motion\.js[^"<>]*"><\/script>/g, '');
+  next = next.replace(/(<script src="assets\/galaxy\.js[^"<>]*"><\/script>)/, '$1\n<script src="assets/text-motion.js?v=2"></script>');
   // Keyboard users must be able to pan wide source images and information tables.
   next = next.replace(/<div class="(table-wrap|booklet-scroll(?: wide)?)"([^>]*)>/g, (all, className, attrs) => attrs.includes('tabindex=') ? all : `<div class="${className}"${attrs} tabindex="0" role="region" aria-label="${className === 'table-wrap' ? 'তথ্য টেবিল' : 'মূল ছবিটি'}; ডানে-বাঁয়ে সরান">`);
   next = next.replace(/<div class="ic">([^<]+)<\/div>/g, (all, value) => EMOJI[value] ? `<div class="ic">${icon(value)}</div>` : all);

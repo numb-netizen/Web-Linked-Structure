@@ -80,8 +80,12 @@ connect('android-app', 'feedback');
 const fileOf = id => `${id}.html`;
 function hrefFor(from, to) {
   // Jump straight to this subject's resources, without changing any storage key.
-  const fragment = pages[from].kind === 'subject' && ['classes', 'tracker'].includes(to)
+  let fragment = pages[from].kind === 'subject' && ['classes', 'tracker'].includes(to)
     ? `#${to === 'classes' ? 'class' : 'track'}-${from}` : '';
+  if (to === 'routine') {
+    const department = departments.includes(from) ? from : departments.find(id => subjectGroups[id].includes(from));
+    if (department) fragment = `#${department}`;
+  }
   return fileOf(to) + fragment;
 }
 const neighborsOf = id => Object.keys(pages).filter(other => graph[id].has(other));

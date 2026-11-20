@@ -23,7 +23,7 @@ import java.util.UUID;
 
 /** Bundled site plus atomically staged, integrity-checked HTTPS updates. */
 final class LocalSiteStore {
-    private static final String HOME = NavigationPolicy.HOME;
+    private static final String UPDATE_HOME = NavigationPolicy.UPDATE_HOME;
     private static final int MAX_MANIFEST = 512 * 1024;
     interface Source { InputStream open(String path) throws IOException; }
     private final AssetManager assets;
@@ -125,7 +125,7 @@ final class LocalSiteStore {
     }
 
     private static InputStream openRemote(String path) throws IOException {
-        HttpURLConnection conn = (HttpURLConnection) new URL(HOME + path).openConnection();
+        HttpURLConnection conn = (HttpURLConnection) new URL(UPDATE_HOME + path).openConnection();
         conn.setInstanceFollowRedirects(false); // Never move update downloads to another origin.
         conn.setConnectTimeout(8000); conn.setReadTimeout(12000);
         conn.setRequestProperty("Cache-Control", "no-cache");

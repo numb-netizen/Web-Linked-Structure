@@ -6,7 +6,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const BASE = 'https://hsc2027.de5.net';
+const {SITE_ORIGIN: BASE} = require('./site-config.cjs');
 const SITE = path.resolve(__dirname, '..', 'site');
 const LD = /\n?<script type="application\/ld\+json">\{"@context":"https:\/\/schema\.org","@type":"BreadcrumbList"[^<]*<\/script>/;
 const strip = s => s.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();

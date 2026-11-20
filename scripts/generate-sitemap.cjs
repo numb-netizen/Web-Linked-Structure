@@ -4,7 +4,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const {execFileSync} = require('node:child_process');
-const BASE = 'https://hsc2027.de5.net';
+const {SITE_ORIGIN: BASE} = require('./site-config.cjs');
 // Compatibility pages remain available to existing links but are intentionally not promoted.
 const retired = new Set(['dabi.html', 'geography.html']);
 

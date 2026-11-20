@@ -44,7 +44,7 @@ test('correct business subject names and both paper areas are available', () => 
 test('regular pages now keep headings still and retain visible content and reduced-motion support', () => {
   for (const name of fs.readdirSync(site).filter(x => x.endsWith('.html') && !x.startsWith('google'))) {
     assert.doesNotMatch(read(name), /assets\/(?:heading-motion|light-motion|subject-scene)\.(css|js)/, name);
-    assert.ok(read(name).includes('assets/style.css?v=2'), name);
+    assert.ok(read(name).includes('assets/style.css?v=3'), name);
   }
   const css = read('assets/style.css');
   assert.doesNotMatch(css, /@keyframes|animation:(?!none\b)/);

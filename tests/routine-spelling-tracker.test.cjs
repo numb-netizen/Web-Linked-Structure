@@ -13,7 +13,8 @@ test('compulsory subjects use the standard spelling আবশ্যিক', () =
 
 test('college class routine is available as an accessible table alongside the original photo', () => {
   const html = read('college-routine.html');
-  const table = html.match(/<table class="college-table routine-table">([\s\S]*?)<\/table>/);
+  // Ignore accessibility relationships only for the source-content spot checks below.
+  const table = html.replace(/ (?:id|headers)="[^"]+"/g, '').match(/<table class="college-table routine-table">([\s\S]*?)<\/table>/);
   assert.ok(table, 'routine table');
   const days = [...table[1].matchAll(/<tbody data-day="([^"]+)">([\s\S]*?)<\/tbody>/g)];
   assert.deepEqual(days.map(d => d[1]), ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার']);

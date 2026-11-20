@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const {isNoIndex} = require('../scripts/generate-sitemap.cjs');
 const site = path.join(__dirname,'..','site');
-const base = 'https://hsc2027.de5.net';
+const base = 'https://chugc.cc.cd';
 const read = name => fs.readFileSync(path.join(site,name),'utf8');
 const meta = (html, name) => [...html.matchAll(new RegExp(`<meta\\s+(?:name|property)="${name}"\\s+content="([^"]*)"\\s*>`, 'gi'))].map(m=>m[1]);
 const pages = [...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => new URL(m[1]));

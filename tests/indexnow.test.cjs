@@ -24,7 +24,7 @@ test('IndexNow request follows the protocol: host, key, matching keyLocation, ab
   assert.equal(ENDPOINT, 'https://api.indexnow.org/indexnow');
   const body = payload(urls, key);
   assert.deepEqual(Object.keys(body), ['host', 'key', 'keyLocation', 'urlList']);
-  assert.equal(body.host, HOST); assert.equal(HOST, 'hsc2027.de5.net');
+  assert.equal(body.host, HOST); assert.equal(HOST, 'chugc.cc.cd');
   assert.equal(body.keyLocation, `${BASE}/${key}.txt`);
   assert.ok(body.urlList.length >= 30 && body.urlList.length <= 10000);
   for (const url of body.urlList) assert.equal(new URL(url).host, HOST, url);
@@ -67,8 +67,8 @@ test('Pages deploy pings IndexNow after the deployment, never blocking it, with 
 test('deploy-time sitemap carries real git dates while the committed sitemap stays date-free', () => {
   assert.doesNotMatch(read('sitemap.xml'), /lastmod/);
   const xml = makeSitemap(site, {lastmod: name => name === 'index.html' ? '2026-11-19' : null});
-  assert.match(xml, /<url><loc>https:\/\/hsc2027\.de5\.net\/<\/loc><lastmod>2026-11-19<\/lastmod><\/url>/);
-  assert.match(xml, /<url><loc>https:\/\/hsc2027\.de5\.net\/physics\.html<\/loc><\/url>/);
+  assert.match(xml, /<url><loc>https:\/\/chugc\.cc\.cd\/<\/loc><lastmod>2026-11-19<\/lastmod><\/url>/);
+  assert.match(xml, /<url><loc>https:\/\/chugc\.cc\.cd\/physics\.html<\/loc><\/url>/);
   assert.match(gitLastmod(site)('index.html'), /^\d{4}-\d{2}-\d{2}$/);
   assert.equal(gitLastmod(site)('no-such-page.html'), null);
 });
