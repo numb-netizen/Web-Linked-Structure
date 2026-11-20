@@ -1,0 +1,195 @@
+/* Campus × galaxy. The user's actual photo is a background, never a substitute campus.
+   CSS animates the bounded, randomly seeded decorations; reading content stays still. */
+:root{--glass-surface:rgba(255,255,255,.88);--glass-border:rgba(134,166,164,.5);--glass-highlight:rgba(255,255,255,.92);--glass-shadow:0 12px 40px #173e410b;--sky-violet:#91c7bc;--sky-cyan:#76badb}
+:root[data-theme="dark"]{--glass-surface:rgba(20,39,50,.9);--glass-border:rgba(119,159,162,.38);--glass-highlight:rgba(200,236,232,.12);--glass-shadow:0 16px 44px #020e1728;--sky-violet:#40877d;--sky-cyan:#397d9b}
+body{isolation:isolate}
+.galaxy-sky{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:radial-gradient(ellipse at 8% 6%,#dfece6 0,transparent 49%),radial-gradient(ellipse at 94% 38%,#e2eff5 0,transparent 45%),#f5f8f8}
+.galaxy-sky::before{content:"";position:absolute;inset:0;background:url("college-campus.webp") center 25%/cover no-repeat;opacity:.055;mask-image:linear-gradient(#000,transparent 76%);-webkit-mask-image:linear-gradient(#000,transparent 76%)}
+:root[data-theme="dark"] .galaxy-sky{background:radial-gradient(ellipse at 7% 4%,#163b3c 0,transparent 52%),radial-gradient(ellipse at 95% 45%,#14394c 0,transparent 55%),#0b1924}
+:root[data-theme="dark"] .galaxy-sky::before{opacity:.08}
+.galaxy-nebula{position:absolute;display:block;width:72vw;height:80vh;min-width:340px;border-radius:50%;opacity:.28;background:radial-gradient(ellipse,var(--sky-violet),transparent 66%);animation:galaxy-nebula-drift 25s ease-in-out infinite alternate;transform-origin:center}
+.galaxy-nebula--violet{left:-25%;top:-18%}
+.galaxy-nebula--cyan{right:-28%;bottom:-26%;background:radial-gradient(ellipse,var(--sky-cyan),transparent 66%);animation-delay:-13s;animation-direction:alternate-reverse}
+.galaxy-stars{position:absolute;inset:-70px;display:block;background-image:radial-gradient(1px 1px at 18px 26px,#557e80 95%,transparent),radial-gradient(1px 1px at 102px 170px,#7193b5 95%,transparent),radial-gradient(1.5px 1.5px at 250px 85px,#92a47a 95%,transparent);background-size:313px 257px,431px 379px,587px 431px;opacity:.27;animation:galaxy-star-drift 52s linear infinite alternate}
+:root[data-theme="dark"] .galaxy-stars{background-image:radial-gradient(1px 1px at 18px 26px,#d9eaff 95%,transparent),radial-gradient(1px 1px at 102px 170px,#a9d9ee 95%,transparent),radial-gradient(1.5px 1.5px at 250px 85px,#d2e8c8 95%,transparent);opacity:.5}
+
+/* A stable header and solid fallbacks keep all navigation readable. */
+nav{background:rgba(255,255,255,.95);box-shadow:0 3px 30px #173e4108}
+:root[data-theme="dark"] nav{background:rgba(14,30,41,.96)}
+.galaxy-toggle{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;padding:0;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--text);flex:none}
+.galaxy-toggle .galaxy-play{display:none}
+.galaxy-toggle[aria-pressed="true"] .galaxy-pause{display:none}
+.galaxy-toggle[aria-pressed="true"] .galaxy-play{display:block}
+.galaxy-toggle:hover{border-color:var(--green2);background:var(--accent-soft)}
+.dept,.subj,.chan,.res,.dabi-teaser,.connection-panel,.network-directory-group,.network-diagram,.meet-list,.meet-figure,.overall,.tcard,.rt,.group-card,.info-panel,.vigilance-card,.teacher-card,.council-card,.android-panel,.feedback-banner{border-color:var(--glass-border);border-radius:16px;box-shadow:inset 0 1px 0 var(--glass-highlight),var(--glass-shadow)}
+.portal-section{background:transparent;border-color:var(--glass-border)}
+.exam-section,.online-preview{background:transparent}
+.page-head{background:var(--panel);border-color:var(--glass-border)}
+footer{border-top-color:#789b99}
+@supports ((backdrop-filter:blur(16px)) or (-webkit-backdrop-filter:blur(16px))){
+  nav{-webkit-backdrop-filter:blur(20px) saturate(125%);backdrop-filter:blur(20px) saturate(125%)}
+  .dept,.subj,.chan,.res,.dabi-teaser,.connection-panel,.network-directory-group,.network-diagram,.meet-list,.meet-figure,.overall,.tcard,.rt,.group-card,.info-panel,.vigilance-card,.teacher-card,.council-card,.android-panel,.feedback-banner{background:var(--glass-surface);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+  .page-head{background:var(--glass-surface);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+}
+@media(hover:hover) and (pointer:fine){
+  .dept,.subj,.chan,.res,.dabi-teaser{transition:transform .2s,border-color .2s,box-shadow .2s}
+  .dept:hover,.subj:hover,.chan:hover,.res:hover,.dabi-teaser:hover{transform:translateY(-3px);border-color:#80aba4;box-shadow:inset 0 1px 0 var(--glass-highlight),0 16px 40px #254a4c18}
+}
+
+/* The uploaded building fills the hero. Overlays grade it to deep green/sky blue.
+   No artificial building, photo window, orbit frame or cropped image card. */
+.hero{--text:#f1f6f4;--muted:#c9dcda;--green2:#b8eddd;--green:#367969;--panel:#112e38;--line:#577e7f;--accent-soft:#1b4749;--button:#d4eee4;--button-ink:#133c35;background:#071f29;padding-top:171px;border-bottom-color:#486967;isolation:isolate}
+.campus-backdrop{position:absolute;inset:108px 0 0;background:#183a3f url("college-campus.webp") center 43%/cover no-repeat;filter:saturate(.79) brightness(.94);z-index:0}
+.hero::before{inset:0;z-index:1;opacity:1!important;background:linear-gradient(90deg,#061e28f5 0%,#061e28ed 23%,#061e28c2 42%,#061e284d 69%,#061e2838 100%),linear-gradient(0deg,#071f29 0%,#071f29bd 17%,#071f2900 65%,#071f2933 100%)}
+.hero-galaxy{position:absolute;inset:108px 0 0;overflow:hidden;pointer-events:none;z-index:2}
+.hero-galaxy .galaxy-stars{opacity:.65;background-image:radial-gradient(1px 1px at 18px 26px,#e8fff4 95%,transparent),radial-gradient(1px 1px at 102px 170px,#d0eaff 95%,transparent),radial-gradient(1.5px 1.5px at 250px 85px,#f2e6bd 95%,transparent);animation-duration:38s}
+.hero-galaxy .galaxy-nebula{opacity:.45;width:78%;height:100%;min-width:360px}
+.hero-galaxy .galaxy-nebula--violet{left:-32%;top:10%;background:radial-gradient(ellipse,#30857680,transparent 68%)}
+.hero-galaxy .galaxy-nebula--cyan{right:-35%;bottom:-46%;background:radial-gradient(ellipse,#77a9d36b,transparent 68%)}
+.galaxy-ribbon{position:absolute;inset:-30% -50%;display:block;background:linear-gradient(115deg,transparent 39%,#c9f3e21a 46%,#bdeaff0a 51%,transparent 57%);animation:galaxy-light-sweep 23s ease-in-out infinite alternate;opacity:.65}
+.hero-grid{z-index:3;grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr);gap:94px;min-height:537px;padding-bottom:38px;align-items:center}
+.hero-copy{min-width:0;max-width:655px}
+.hero-kicker{font-size:11px;letter-spacing:.02em;color:#d0e1df}
+.hero-kicker>span{display:inline-flex;align-items:center;gap:7px;background:#21474a9c;border-color:#8aada5;color:#d5f4e6;font-size:9px;letter-spacing:.09em}
+.hero-kicker .icon{width:13px;height:13px}
+.hero h1{font-size:clamp(37px,3.9vw,55px);line-height:1.4;letter-spacing:-.018em;margin:19px 0 21px;color:#f6faf7;text-shadow:0 2px 20px #031b1f66}
+.hero h1 .grad{color:#c2e7d5;text-shadow:0 1px 22px #071f2966}
+.hero p.sub{font-size:16px;line-height:1.9;color:#d0dfdd;max-width:550px}
+.hero .btn-p{background:#d4eee4;color:#133c35;box-shadow:inset 0 1px 0 #fff9,0 4px 24px #bcead41c}
+.hero .btn-p:hover{background:#eefbf3;color:#133c35}
+.hero .btn-g{background:#112f3bce;border-color:#87aba8;color:#effaf5}
+.hero .btn-g:hover{background:#214c51;color:#fff;border-color:#b1dbca}
+.hero .hero-footnote{color:#c8dcd6;font-size:12px!important;margin-top:19px!important}
+.hero-quick-links{max-width:430px;background:#12333dd9;border-color:#689087;border-radius:11px;margin-top:25px}
+.hero-quick-links a{color:#e1f1ed;padding:14px 8px;font-size:12px}
+.hero-quick-links a+a{border-color:#4b716f}
+.hero-quick-links a:hover{background:#1c484d}
+.hero .hero-aside{align-self:end;justify-self:end;width:100%;max-width:410px;margin-bottom:5px}
+.campus-place{position:absolute;z-index:4;top:144px;right:max(24px,calc((100% - 1220px)/2));display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid #b7e1d170;border-radius:30px;background:#0b2e39bf;color:#f0fff6;font-size:12px;line-height:1.5;box-shadow:inset 0 1px 0 #effff329}
+.campus-place .icon{width:17px;height:17px;color:#c4ecd9}
+.campus-place .icon:last-child{width:14px;height:14px;margin-left:3px}
+.campus-place:hover{background:#1e514ee8;border-color:#c8ebd4}
+.campus-photo-link{display:inline-flex;align-items:center;gap:7px;color:#d0e5dd;font-size:11px;line-height:1.7;text-decoration:underline;text-underline-offset:4px}
+.hero-aside>.campus-photo-link{margin-top:14px;float:right}
+.campus-photo-link .icon{width:12px;height:12px}
+.hero .cd-card{margin-top:0;border-radius:17px;border-color:#a2c8b580;background:#102f3aeb;box-shadow:inset 0 1px 0 #e0f7df38,0 18px 50px #021a234a}
+.hero .countdown-heading{padding:18px 20px;gap:12px;border-color:#6a948870;align-items:flex-start;flex-direction:column}
+.hero .countdown-heading h2{font-size:20px;margin:0;color:#edf8f2}
+.hero .exam-status{font-size:10px;border:1px solid #84ad9b;white-space:nowrap;color:#deefce;background:#254c3dd1;padding:3px 7px}
+.hero .countdown-body{padding:19px 20px;display:block}
+.hero .cd-grid{width:100%;gap:8px}
+.hero .cd-cell{background:#061e29b3;border-color:#6b9485;padding:11px 2px 9px}
+.hero .cd-cell b{font-size:31px;line-height:1.3;color:#effaf4}
+.hero .cd-cell span{font-size:10px;color:#c8dbd3}
+.countdown-context{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-top:15px}
+.countdown-context p{color:#d1e3d9;font-size:11px;line-height:1.8;margin:0}
+.hero .countdown-source{padding:0;background:transparent;border:0;font-size:11px;color:#ccefd9;justify-content:flex-start;gap:7px;line-height:1.7;white-space:nowrap}
+.hero .countdown-source .icon{width:13px;height:13px}
+.hero .stats{z-index:3;border-color:#6b908780;padding-block:26px}
+.hero .stat{border-color:#6b908770}
+.hero .stat b{color:#f0f7ed}
+.hero .stat span{color:#cadbd3}
+@supports ((backdrop-filter:blur(16px)) or (-webkit-backdrop-filter:blur(16px))){
+  .hero .cd-card,.hero-quick-links,.campus-place{-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+}
+
+/* The same uploaded photograph is also a background on the college heading. */
+.campus-heading{--text:#f2f8f3;--muted:#d2e2dc;--green2:#bde6d3;position:relative;max-width:none;padding:38px;border:1px solid #709b8d;border-radius:18px;background:linear-gradient(90deg,#092933f2,#092933dd 45%,#09293380),url("college-campus.webp") center 43%/cover no-repeat;box-shadow:inset 0 1px 0 #fff2}
+.campus-heading p{max-width:660px}
+.campus-heading .campus-photo-link{margin-top:4px}
+
+/* Randomized fields are non-interactive and never change document layout.
+   Positions, durations, paths, colors and phases differ on every visit. */
+.galaxy-field{position:absolute;inset:0;overflow:hidden;pointer-events:none;contain:strict}
+[data-galaxy-field="ambient"]{opacity:.35}
+:root[data-theme="dark"] [data-galaxy-field="ambient"]{opacity:.55}
+.galaxy-mote,.galaxy-meteor,.galaxy-halo{position:absolute;display:block;left:var(--x);top:var(--y);color:var(--tone);pointer-events:none}
+.galaxy-mote{width:var(--size);height:var(--size);border-radius:50%;background:var(--tone);box-shadow:0 0 9px currentColor;opacity:var(--alpha);animation:galaxy-mote-float var(--duration) ease-in-out var(--delay) infinite alternate}
+.galaxy-mote:nth-child(3n){border-radius:1px;animation-name:galaxy-mote-swirl}
+.galaxy-mote:nth-child(7n){background:transparent;box-shadow:none}
+.galaxy-mote:nth-child(7n)::before,.galaxy-mote:nth-child(7n)::after{content:"";position:absolute;inset:0;background:var(--tone);transform:scale(.35,2.8);border-radius:50%}
+.galaxy-mote:nth-child(7n)::after{transform:scale(2.8,.35)}
+.galaxy-meteor{width:var(--trail);height:1px;background:linear-gradient(90deg,transparent,var(--tone));transform:rotate(var(--angle));opacity:0;animation:galaxy-meteor-travel var(--duration) linear var(--delay) infinite}
+.galaxy-meteor::after{content:"";position:absolute;right:0;top:-1px;width:3px;height:3px;background:var(--tone);border-radius:50%;box-shadow:0 0 9px var(--tone)}
+.galaxy-halo{width:var(--size);height:var(--size);border:1px solid currentColor;border-radius:50%;opacity:.09;animation:galaxy-halo-drift var(--duration) ease-in-out var(--delay) infinite alternate}
+.galaxy-halo::before{content:"";position:absolute;inset:12%;border:1px dashed currentColor;border-radius:50%;opacity:.65}
+/* Keep this after every animation shorthand: no motion before a working control. */
+.galaxy-animated{animation-play-state:paused}
+:root[data-galaxy-motion="running"] .galaxy-animated{animation-play-state:running}
+@keyframes galaxy-nebula-drift{from{transform:translate3d(-3%,0,0) scale(1)}to{transform:translate3d(10%,8%,0) scale(1.14)}}
+@keyframes galaxy-star-drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(22px,-30px,0)}}
+@keyframes galaxy-light-sweep{from{transform:translate3d(-12%,0,0) rotate(-5deg)}to{transform:translate3d(18%,5%,0) rotate(8deg)}}
+@keyframes galaxy-mote-float{0%{transform:translate3d(0,0,0) scale(.75);opacity:calc(var(--alpha) * .5)}45%{opacity:var(--alpha)}100%{transform:translate3d(var(--dx),var(--dy),0) scale(1.15);opacity:calc(var(--alpha) * .55)}}
+@keyframes galaxy-mote-swirl{0%{transform:translate3d(0,0,0) rotate(0deg);opacity:calc(var(--alpha) * .5)}60%{opacity:var(--alpha)}100%{transform:translate3d(var(--dy),var(--dx),0) rotate(160deg);opacity:calc(var(--alpha) * .6)}}
+@keyframes galaxy-meteor-travel{0%,72%,100%{opacity:0;transform:translate3d(-130px,-65px,0) rotate(var(--angle)) scaleX(.5)}74%{opacity:var(--alpha)}86%{opacity:0;transform:translate3d(420px,200px,0) rotate(var(--angle)) scaleX(1)}}
+@keyframes galaxy-halo-drift{from{transform:translate3d(-10px,0,0) rotate(0deg) scale(.9)}to{transform:translate3d(var(--dx),-70px,0) rotate(80deg) scale(1.15)}}
+
+@media(max-width:1200px){.hero-grid{gap:52px}.hero .stat{gap:12px}.hero .stat span{font-size:11px}}
+@media(max-width:1000px){.hero-grid{gap:32px;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}.hero h1{font-size:43px}.hero-kicker{font-size:10px;gap:7px}.hero-kicker>span{font-size:8px}.hero p.sub{font-size:15px}.hero .countdown-body{padding:16px}.hero .cd-cell b{font-size:27px}.countdown-context{gap:10px}.hero .countdown-source,.countdown-context p{font-size:10px}}
+@media(max-width:760px){
+  .galaxy-toggle{width:36px;height:36px}
+  .hero{padding-top:315px}
+  .campus-backdrop{top:76px;bottom:auto;height:330px;background-position:50% 40%;filter:saturate(.85) brightness(.95)}
+  .hero::before{background:linear-gradient(180deg,#071f290d 76px,#071f2926 168px,#071f29c7 303px,#071f29 407px)}
+  .hero-galaxy{inset:76px 0 0}
+  .campus-place{top:98px;right:18px;font-size:10px;padding:8px 12px;gap:8px}
+  .campus-place .icon{width:14px;height:14px}
+  .hero-grid{grid-template-columns:minmax(0,1fr);min-height:0;gap:30px;padding-bottom:34px}
+  .hero-copy{max-width:620px}
+  .hero h1{font-size:clamp(34px,7vw,46px);line-height:1.4;margin-top:17px}
+  .hero-kicker{font-size:10px;gap:8px;flex-wrap:wrap}
+  .hero-kicker>span{font-size:9px}
+  .hero .hero-aside{max-width:540px;width:100%;margin:0;justify-self:start}
+  .hero-quick-links{margin-top:22px;max-width:540px}
+  .hero .countdown-heading{flex-direction:row;align-items:center;padding:17px 19px;flex-wrap:wrap;gap:10px}
+  .hero .countdown-heading h2{font-size:18px}
+  .hero .countdown-body{padding:18px 19px}
+  .hero .cd-grid{gap:9px}
+  .hero .cd-cell b{font-size:31px}
+  .hero .stats{padding-block:25px}
+  .hero .stat{padding-inline:18px;gap:11px}
+  .hero .stat:nth-child(odd){padding-left:0}
+  .hero .stat span{font-size:10px}
+  .galaxy-nebula{width:110vw;height:65vh}
+  .campus-heading{padding:26px 22px;background-position:52% 43%}
+}
+@media(max-width:480px){
+  .hero{padding-top:295px}
+  .campus-backdrop{height:310px}
+  .hero::before{background:linear-gradient(180deg,#071f2900 76px,#071f2926 158px,#071f29d9 293px,#071f29 387px)}
+  .hero h1{font-size:36px}
+  .hero p.sub{font-size:15px}
+  .hero-kicker>span{font-size:8px;padding:4px 7px}
+  .hero-kicker{font-size:9px;gap:7px}
+  .hero .countdown-heading{padding:16px 17px}
+  .hero .countdown-heading h2{font-size:18px}
+  .hero .exam-status{font-size:9px}
+  .hero .countdown-body{padding:17px}
+  .hero .cd-grid{gap:7px}
+  .hero .cd-cell b{font-size:30px}
+  .hero .countdown-source,.countdown-context p{font-size:10px}
+  .hero .hero-footnote{font-size:11px!important}
+  .hero .stat b{font-size:24px}
+  .hero .stat span{font-size:10px}
+  .hero .stat{gap:9px;padding-right:12px}
+  .campus-heading{padding:24px 20px;background-image:linear-gradient(90deg,#092933f2,#092933da),url("college-campus.webp")}
+}
+@media(max-width:350px){
+  .galaxy-toggle{width:32px;height:34px}
+  .hero h1{font-size:32px}
+  .hero .btns{flex-direction:column}
+  .hero-kicker>span{font-size:8px;padding-inline:6px}
+  .hero .stat{gap:8px;padding-inline:12px}
+  .hero .stat:nth-child(odd){padding-left:0}
+  .hero .stat b{font-size:21px}
+  .hero .stat span{font-size:9px}
+  .hero .cd-cell b{font-size:26px}
+}
+/* Static, readable fallbacks remain available offline and with scripts disabled. */
+html:not([data-js="true"]) .hero .countdown-body{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+html:not([data-js="true"]) .hero .cd-grid{width:100%}
+.hero noscript{display:block;min-width:0;max-width:100%;font-size:12px;line-height:1.8;color:var(--muted)}
+.hero noscript p{margin:0}
+@media(max-width:1200px){html:not([data-js="true"]) .hero{padding-top:220px}html:not([data-js="true"]) .hero .campus-backdrop{top:0;height:340px}html:not([data-js="true"]) .hero .hero-galaxy{top:0}html:not([data-js="true"]) .hero .campus-place{top:22px}}
+@media(prefers-reduced-motion:reduce){.galaxy-animated{animation:none!important}.galaxy-toggle{display:none!important}.dept,.subj,.chan,.res,.dabi-teaser{transition:none!important;transform:none!important}}
+@media(prefers-reduced-transparency:reduce){nav,.page-head,.dept,.subj,.chan,.res,.dabi-teaser,.connection-panel,.network-directory-group,.network-diagram,.meet-list,.meet-figure,.overall,.tcard,.rt,.group-card,.info-panel,.vigilance-card,.teacher-card,.council-card,.android-panel,.feedback-banner,.hero .cd-card,.hero-quick-links,.campus-place{background:var(--panel);-webkit-backdrop-filter:none;backdrop-filter:none}}

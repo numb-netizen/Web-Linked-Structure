@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const {chromium} = require('playwright-core');
 
 (async () => {
-  const browser = await chromium.launch({headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox']});
+  const browser = await chromium.launch({headless: true, executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome', args: ['--no-sandbox']});
   try {
     {
       const page = await browser.newPage();
@@ -85,8 +85,8 @@ const {chromium} = require('playwright-core');
       assert.equal(await invite.isVisible(), true);
       const layout = await page.evaluate(() => {
         const box = document.querySelector('.feedback-invite').getBoundingClientRect();
-        const before = document.querySelector('.marquee').getBoundingClientRect();
-        const after = document.querySelector('.feedback-invite').nextElementSibling.getBoundingClientRect();
+        const before = document.querySelector('.feedback-invite').previousElementSibling.getBoundingClientRect();
+        const after = document.querySelector('footer').getBoundingClientRect();
         return {normal: getComputedStyle(document.querySelector('.feedback-invite')).position === 'static',
           noOverlap: before.bottom <= box.top && box.bottom <= after.top,
           scrollFits: document.documentElement.scrollWidth <= innerWidth};
@@ -109,7 +109,7 @@ const {chromium} = require('playwright-core');
       await page.getByRole('status').getByText('তোমার মতামত গ্রহণ করা হয়েছে।', {exact:false}).waitFor();
       assert.equal(await page.locator('#feedback-body').inputValue(), '');
       await page.locator('.theme-toggle').click();
-      assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
+      assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
       await page.close();
     }
@@ -150,42 +150,42 @@ const {chromium} = require('playwright-core');
       await page.route('**/*', route => route.request().url().startsWith('http://127.0.0.1:8765/') ? route.continue() : route.abort());
       await page.goto('http://127.0.0.1:8765/index.html');
       const toggle = page.locator('.theme-toggle');
-      assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
+      assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
       assert.equal(await toggle.getAttribute('aria-pressed'), 'false');
       await toggle.focus();
       await page.keyboard.press('Enter');
-      assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
+      assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
       assert.equal(await toggle.getAttribute('aria-pressed'), 'true');
-      assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), 'rgb(244, 249, 246)');
+      assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), 'rgb(16, 25, 35)');
       if (width <= 1200) {
         await page.locator('#burger').click();
         assert.equal(await page.locator('#burger').getAttribute('aria-expanded'), 'true');
         await page.locator('#navLinks a[href="science.html"]').click();
         await page.locator('.theme-toggle').waitFor({state:'visible'});
-        assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
+        assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
       }
       await page.goto('http://127.0.0.1:8765/teachers.html');
-      assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
+      assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
       await page.reload();
-      assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
+      assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
       for (const name of ['student-group.html', 'android-app.html', 'tracker.html', 'college-info.html', 'index.html']) {
         await page.goto('http://127.0.0.1:8765/' + name);
-        assert.equal(await page.locator('html').getAttribute('data-theme'), 'light', name);
+        assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark', name);
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `theme overflow ${name} ${width}`);
       }
       await page.locator('.theme-toggle').click();
-      assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
+      assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
       await page.reload();
-      assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
+      assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
       await page.close();
     }
     {
       const page = await browser.newPage();
       await page.addInitScript(() => Object.defineProperty(window, 'localStorage', {get() {throw new Error('blocked');}}));
       await page.goto('http://127.0.0.1:8765/index.html');
-      assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
-      await page.locator('.theme-toggle').click();
       assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
+      await page.locator('.theme-toggle').click();
+      assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
       await page.close();
     }
     for (const width of [320, 360]) {
@@ -226,7 +226,8 @@ const {chromium} = require('playwright-core');
       const page = await browser.newPage({viewport:{width, height:720}});
       await page.route('**/*', route => route.request().url().startsWith('http://127.0.0.1:8765/') ? route.continue() : route.abort());
       await page.goto('http://127.0.0.1:8765/index.html');
-      await page.locator('a[href="student-group.html"]').click();
+      await page.locator('.dabi-teaser[href="student-group.html"]').click();
+      await page.waitForURL(/student-group\.html$/, {waitUntil:'load'}); // Static first-step markup can precede its event listeners.
       await page.locator('#student-step').waitFor({state:'visible'});
       assert.equal(await page.locator('#student-step').isVisible(), true);
       assert.equal(await page.locator('#choice-step').isVisible(), false);
@@ -258,7 +259,7 @@ const {chromium} = require('playwright-core');
       const page = await browser.newPage({viewport:{width, height:720}});
       await page.route('**/*', route => route.request().url().startsWith('http://127.0.0.1:8765/') ? route.continue() : route.abort());
       await page.goto('http://127.0.0.1:8765/index.html');
-      await page.locator('a[href="teachers.html"]').click();
+      await page.locator('.dabi-teaser[href="teachers.html"]').click();
       await page.locator('#teacher-principal').waitFor({state:'visible'});
       const card = page.locator('#teacher-principal');
       const number = card.locator('a[href="tel:01712612992"]');
@@ -279,7 +280,7 @@ const {chromium} = require('playwright-core');
       await page.route('**/*', route => route.request().url().startsWith('http://127.0.0.1:8765/') ? route.continue() : route.abort());
       for (const name of ['college-info.html', 'college-routine.html', 'honours-info.html', 'hsc-2027-routine.html']) {
         await page.goto('http://127.0.0.1:8765/index.html');
-        await page.locator(`a[href="${name}"]`).first().click();
+        await page.locator(`.dabi-teaser[href="${name}"]`).click();
         assert.match(page.url(), new RegExp(name.replace('.', '\.') + '$'));
         for (const details of await page.locator('.booklet-source').all()) {
           await details.locator('summary').click();
@@ -292,59 +293,22 @@ const {chromium} = require('playwright-core');
       }
       await page.close();
     }
+    // Reading content stays still even with the requested randomized campus/galaxy effects.
     for (const width of [320, 360, 1201]) {
       for (const reducedMotion of ['reduce', 'no-preference']) {
         const page = await browser.newPage({viewport:{width, height:720}, reducedMotion});
         await page.route('**/*', route => route.request().url().startsWith('http://127.0.0.1:8765/') ? route.continue() : route.abort());
         await page.goto('http://127.0.0.1:8765/index.html');
-        assert.equal(await page.locator('.hero-spark').count(), reducedMotion === 'reduce' ? 0 : (width < 600 ? 7 : 12));
-        assert.equal(await page.locator('.hero-sparkles').getAttribute('aria-hidden'), 'true');
-        assert.equal(await page.locator('.hero-sparkles').evaluate(el => getComputedStyle(el).pointerEvents), 'none');
-        assert.equal(await page.locator('.hero-orbits').getAttribute('aria-hidden'), 'true');
-        assert.equal(await page.locator('.hero-orbits').evaluate(el => getComputedStyle(el).pointerEvents), 'none');
-        assert.equal(await page.locator('.hero-ambient').getAttribute('aria-hidden'), 'true');
-        assert.equal(await page.locator('.hero-ambient').evaluate(el => getComputedStyle(el).pointerEvents), 'none');
-        const ambientSelectors = ['.aurora-one', '.ambient-trace', '.comet-one'];
-        const ambientNames = () => Promise.all(ambientSelectors.map(selector => page.locator(selector).evaluate(el => getComputedStyle(el).animationName)));
-        const effectSelectors = ['.orbit-one', '.hero .grad', '.cd-card', '.dabi-teaser[data-motion="bob"] .dabi-teaser-icon', '.dabi-teaser[data-motion="pulse"] .dabi-teaser-icon'];
-        const effectNames = () => Promise.all(effectSelectors.map(selector => page.locator(selector).first().evaluate(el => getComputedStyle(el).animationName)));
-        if (reducedMotion === 'reduce') {
-          assert.equal(await page.locator('.hero-ambient').isVisible(), false);
-          assert.deepEqual(await ambientNames(), ambientSelectors.map(() => 'none'));
-          assert.deepEqual(await effectNames(), effectSelectors.map(() => 'none'));
-          assert.equal(await page.locator('.hero-orbits').isVisible(), false);
-          assert.equal(await page.locator('h2.title').first().evaluate(el => getComputedStyle(el).animationName), 'none');
-          assert.equal(await page.locator('.motion-toggle').isVisible(), false);
-          assert.equal(await page.locator('.marquee-track').evaluate(el => getComputedStyle(el).animationName), 'none');
-          assert.equal(await page.locator('.reveal').first().evaluate(el => getComputedStyle(el).opacity), '1');
-        } else {
-          assert.equal(await page.locator('.hero-ambient').isVisible(), true);
-          assert.deepEqual(await ambientNames(), ['aurora-drift', 'trace-flow', 'comet-pass']);
-          assert.deepEqual(await effectNames(), ['orbit-spin', 'color-flow', 'card-glow', 'icon-bob', 'icon-pulse']);
-          await page.locator('.motion-toggle').click();
-          assert.equal(await page.locator('.hero-ambient').isVisible(), false);
-          assert.deepEqual(await ambientNames(), ambientSelectors.map(() => 'none'));
-          assert.deepEqual(await effectNames(), effectSelectors.map(() => 'none'));
-          assert.equal(await page.locator('.hero-orbits').isVisible(), false);
-          assert.equal(await page.locator('.motion-toggle').textContent(), 'অ্যানিমেশন চালু');
-          assert.equal(await page.locator('.marquee-track').evaluate(el => getComputedStyle(el).animationName), 'none');
-          assert.equal(await page.locator('h2.title').first().evaluate(el => getComputedStyle(el).animationName), 'none');
-          await page.goto('http://127.0.0.1:8765/commerce.html');
-          assert.equal(await page.locator('h1').evaluate(el => getComputedStyle(el).animationName), 'none');
-          assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `commerce overflow at ${width}`);
-          await page.goto('http://127.0.0.1:8765/index.html');
-          await page.reload();
-          assert.equal(await page.locator('.motion-toggle').textContent(), 'অ্যানিমেশন চালু');
-          await page.locator('.motion-toggle').click();
-          assert.equal(await page.locator('.motion-toggle').textContent(), 'অ্যানিমেশন বন্ধ');
-          assert.deepEqual(await effectNames(), ['orbit-spin', 'color-flow', 'card-glow', 'icon-bob', 'icon-pulse']);
-          assert.equal(await page.locator('.hero-ambient').isVisible(), true);
-          assert.deepEqual(await ambientNames(), ['aurora-drift', 'trace-flow', 'comet-pass']);
-          assert.equal(await page.locator('h2.title').first().evaluate(el => getComputedStyle(el).animationName), 'heading-color-flow');
-        }
-        assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `motion home overflow at ${width}`);
-        await page.locator('a[href="student-group.html"]').click();
-        assert.match(page.url(), /student-group\.html$/);
+        assert.equal(await page.locator('.hero-spark, .hero-orbits, .hero-ambient, .motion-toggle, .marquee').count(), 0);
+        const animations = await page.locator('h1, h2, .hero .grad, .cd-card, .dabi-teaser-icon, footer').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).animationName));
+        assert.ok(animations.every(name => name === 'none'));
+        assert.equal(await page.locator('.reveal').first().evaluate(el => getComputedStyle(el).opacity), '1');
+        assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `formal home overflow at ${width}`);
+        await page.locator('.dabi-teaser[href="student-group.html"]').click();
+        await page.waitForURL(/student-group\.html$/);
+        assert.equal(await page.locator('#student-step').isVisible(), true);
+        await page.goto('http://127.0.0.1:8765/commerce.html');
+        assert.equal(await page.locator('h1').evaluate(el => getComputedStyle(el).animationName), 'none');
         await page.close();
       }
     }

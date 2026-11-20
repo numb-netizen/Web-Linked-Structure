@@ -31,6 +31,10 @@ jobs:
         with:
           # Full history: real per-page <lastmod> dates and the IndexNow change list come from git.
           fetch-depth: 0
+      - name: Check shared design and web-linked navigation
+        run: |
+          node scripts/site-shell.cjs --check
+          node scripts/site-navigation.cjs --check
       - name: Generate public sitemap
         run: node scripts/generate-sitemap.cjs --lastmod
       - name: Generate offline update manifest

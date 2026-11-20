@@ -8,7 +8,7 @@ const entries = (s, subject) => [...s.matchAll(new RegExp(`data-subject="${subje
 
 test('economics is a humanities subject, not a business-studies subject', () => {
   const index = read('index.html');
-  const branch = dept => index.match(new RegExp(`<a class="tree-dept" href="${dept}\\.html">[\\s\\S]*?</div>\\s*</div>`))[0];
+  const branch = dept => index.match(new RegExp(`data-graph-group="${dept}">[\\s\\S]*?</div>`))[0];
   assert.match(branch('arts'), /href="economics\.html">অর্থনীতি</);
   assert.doesNotMatch(branch('commerce'), /economics\.html/);
   assert.match(read('arts.html'), /href="economics\.html"/);

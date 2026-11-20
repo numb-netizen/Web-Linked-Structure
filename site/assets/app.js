@@ -102,18 +102,7 @@ if(resetBtn) resetBtn.addEventListener("click", () => {
 });
 loadState();
 
-/* ---------- NAV ---------- */
-const burger = $("#burger"), navLinks = $("#navLinks");
-if(burger && navLinks) burger.addEventListener("click", () => {
-  const open = navLinks.classList.toggle("open");
-  burger.setAttribute("aria-expanded", String(open));
-});
-if(navLinks) navLinks.addEventListener("click", e => {
-  if(e.target.closest("a")) {
-    navLinks.classList.remove("open");
-    if(burger) burger.setAttribute("aria-expanded", "false");
-  }
-});
+/* Navigation is progressively enhanced by interface.js, independent of tracker storage. */
 
 /* ---------- REVEAL ON SCROLL ---------- */
 // Content is visible by default, even when scripts or IntersectionObserver fail.

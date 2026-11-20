@@ -4,27 +4,69 @@
 
 **সাইটের মূল ঠিকানা:** https://hsc2027.de5.net/
 
-## ওয়েবসাইটের কাঠামো (Hierarchical / Tree Structure)
+## ফরমাল একাডেমিক ডিজাইন
 
+- হালকা reading canvas, নেভি–টিল রং, স্থানীয় **Hind Siliguri** বাংলা ফন্ট এবং একই SVG আইকন সেটে হোম ও ভেতরের ৩৫টি পেজ সাজানো। আগের সংরক্ষিত লাইট/ডার্ক পছন্দ বজায় থাকে; নতুন ব্যবহারকারীর ডিফল্ট লাইট।
+- হোমে বিভাগ, কলেজ বিজ্ঞপ্তি, দরকারি তথ্য, বিষয়ের ডিরেক্টরি ও অনলাইন ক্লাস আলাদা সেকশনে আছে। নেটওয়ার্কের চিত্র native details দিয়ে প্রয়োজনে খোলা যায়।
+- ডিরেক্টরির সার্চ বাংলা নাম ও ইংরেজি URL-নাম (যেমন `physics`) দিয়ে বর্তমান পেজেই ফিল্টার করে; সার্ভারে তথ্য পাঠায় না। JavaScript বন্ধ থাকলে সার্চ/টগল লুকিয়ে সাধারণ লিংক ও মেনু দেখায়।
+- Skip link, keyboard focus, Escape-এ মেনু বন্ধ করা, responsive layout ও reduced-motion সমর্থন আছে। পুরোনো glow, marquee ও চলমান heading/scene আর লোড হয় না; compatibility assets রাখা হয়েছে।
+- `site/assets/style.css` মূল design tokens/layout, `theme.css` ডার্ক রং ও `interface.js` মেনু/সার্চ সামলায়। `scripts/site-shell.cjs` থেকে shared header/footer ও `assets/icons.svg` তৈরি হয়; `site-navigation.cjs` সেটি HTML-এ বসায়।
+- ফন্টগুলো `site/assets/fonts/`-এ WOFF2 হিসেবে আছে; লাইসেন্স `OFL.txt`-সহ offline manifest-এ অন্তর্ভুক্ত। ফন্ট/আইকনের জন্য CDN লাগে না। সাইটটি শিক্ষার্থীদের উদ্যোগ, কলেজের আনুষ্ঠানিক ওয়েবসাইট নয়।
+- বাংলা **১** যাতে **৯**-এর মতো অস্পষ্ট না দেখায়, শুধু `০–৯` সংখ্যার জন্য ৩.৮ KB Noto Sans Bengali subset (`numerals.css`) আছে। অক্ষরের আগের ফন্ট ও সব আসল সংখ্যা/ট্র্যাকার key অপরিবর্তিত; নতুন ফন্টের লাইসেন্সও অফলাইনে থাকে। [সংখ্যার ফন্টের উৎস ও তৈরির বিবরণ](docs/bengali-numerals.md)।
+
+## গ্লাসি–গ্যালাক্সি UI ও কলেজের ছবি
+
+- হোমের পুরো ব্যাকগ্রাউন্ডে **ব্যবহারকারীর আপলোড করা কলেজ ভবনের ছবিটি** আছে; আগের আলাদা photo card নয়। ছবির সবুজ, আকাশি ও ইটের উষ্ণ রঙের সঙ্গে deep-teal overlay ও glass panel মেলানো। ফোনে ওপরের background area-তে ভবন দেখা যায়; খুব লম্বা cover crop দিয়ে ছবির সরু অংশ দেখানো হয় না। হোমসহ ৩৫-পেজের shared shell-এ হালকা campus backdrop; light/dark reading preference আগের মতো থাকে।
+- নেভিগেশনের **অ্যানিমেশন বিরতি** বোতাম সব পেজের motion বন্ধ/চালু করে। আগের `site:motion-paused` key-ই ব্যবহৃত; পছন্দ reload, অন্য পেজ ও একই origin-এর অন্য tab-এও মেলে। OS-এর reduced motion সবসময় অগ্রাধিকার পায়। Tab background-এ গেলে animation সাময়িক থামে।
+- JavaScript বা নতুন motion script না চললে sky স্থির ও বোতাম লুকানো থাকে। `backdrop-filter` না থাকলে solid panel, reduced-transparency-তে opaque panel থাকে। কোনো WebGL/canvas, animation loop বা বাইরের runtime dependency নেই। `galaxy.css` / `galaxy.js` আলাদা progressive enhancement, পড়ার মূল design অপরিবর্তিত।
+- একই ছবিটি কলেজ পরিচিতির heading-এরও background। স্থানীয় `college-campus.webp` ১০০০×৪০০, প্রায় ১৩৪ KiB; original upload `docs/images/college-campus-original.png`-এ অক্ষত। প্রত্যাখ্যাত gate photo ও সংবাদপত্রের photo credit সরানো হয়েছে। কোনো AI-তৈরি ক্যাম্পাস বা Facebook/CDN hotlink নেই; background app-এর offline manifest-এ আছে। [ছবির উৎস ও rights সংক্রান্ত নোট](docs/college-photo.md); কোনো open-content license বা কলেজের আনুষ্ঠানিক অনুমোদন দাবি করা হয়নি।
+- **প্রচুর র‌্যান্ডম অ্যানিমেশন:** তারার কণা, cross-star, shooting-star, floating halo, nebula, star drift ও light sweep। Desktop-এ ১১৮টি ও phone-এ ৬৩টি randomized decoration; অবস্থান, পথ, রং, মাপ, গতি ও phase প্রতি ভিজিটে বদলায়। লেখা, ছবি ও heading স্থির থাকে। CSS animation চলে, JS কোনো frame/timer loop চালায় না; বারবার pause বা tab বদলালে নতুন node জমে না।
+- নতুন regression tests: `tests/galaxy-design.test.cjs` ও `tests/galaxy-browser.cjs` — motion preference, cross-tab sync, script/storage failure, no-JS, reduced motion/transparency, responsive layout, স্থানীয় ছবি ও keyboard controls যাচাই করে।
+
+## ওয়েবসাইটের কাঠামো (Web-linked / Network Structure)
+
+সাইটের পেজগুলো এখন পারস্পরিক লিংকে যুক্ত; হোম → বিভাগ → বিষয় ধরে যাওয়া বাধ্যতামূলক নয়। বিভাগ বিষয় খোঁজার একটি উপায়, একমাত্র প্রবেশপথ নয়। কয়েকটি সরাসরি সংযোগের উদাহরণ:
+
+```text
+পদার্থবিজ্ঞান ↔ উচ্চতর গণিত
+পদার্থবিজ্ঞান ↔ অনলাইন ক্লাস ↔ অধ্যায় ট্র্যাকার ↔ স্টাডি রুটিন
+বিজ্ঞান বিভাগ ↔ ICT ↔ মানবিক বিভাগ ↔ ব্যবসায় শিক্ষা
+কলেজের ক্লাস রুটিন ↔ স্টাডি রুটিন ↔ HSC ২০২৭ সম্ভাব্য রুটিন
 ```
-🏫 চুনারুঘাট সরকারি কলেজ (Home)
-├── 🔬 বিজ্ঞান বিভাগ (science.html)
-│   ├── পদার্থবিজ্ঞান, রসায়ন, উচ্চতর গণিত, জীববিজ্ঞান, ICT, বাংলা, English
-├── 📖 মানবিক বিভাগ (arts.html)
-│   └── বাংলা, English, ICT, সমাজবিজ্ঞান, পৌরনীতি, অর্থনীতি, ইতিহাস
-├── 💼 ব্যবসায় শিক্ষা (commerce.html)
-│   └── হিসাববিজ্ঞান, ব্যবসায় উদ্যোগ, ফিন্যান্স, মার্কেটিং, অর্থনীতি, বাংলা, English, ICT, বাংলাদেশ ও বিশ্বপরিচয়
-├── 💬 শিক্ষার্থী গ্রুপ (student-group.html) — যোগ দেওয়ার তথ্য
-├── 👩‍🏫 শিক্ষক পরিচিতি (teachers.html) — সরবরাহ করা বইয়ের নাম, পদবি ও যোগাযোগ
-├── 🎥 অনলাইন ক্লাস (classes.html) — ইন্টারনেট থেকে পাওয়া ফ্রি ক্লাস
-├── ✅ অধ্যায় ট্র্যাকার (tracker.html)
-└── 🕐 স্টাডি রুটিন (routine.html)
+
+- হোমের **পেজ নেটওয়ার্ক** (`index.html#structure`) থেকে সব প্রকাশ্য বিভাগ, বিষয়, টুল ও কলেজের তথ্যপেজে সরাসরি যাওয়া যায়। রেখাগুলো কয়েকটি বাস্তব সংযোগের উদাহরণ, সব লিংকের পূর্ণ চিত্র নয়।
+- প্রতিটি প্রকাশ্য উপপেজের **এই পেজের সংযোগ** অংশে সম্পর্কিত বিষয়, বিভাগ, পড়ার টুল ও প্রাসঙ্গিক তথ্যের পারস্পরিক লিংক আছে। দীর্ঘ তালিকা খোলা/বন্ধ করা যায়।
+- বাংলা, English-এর দুই পত্র ও ICT একই পেজ ব্যবহার করে তিন বিভাগে যুক্ত; বিভাগভিত্তিক আলাদা কপি নয়। অর্থনীতি মানবিকেই আছে, ব্যবসায় শিক্ষার তালিকায় নয়।
+- বিষয় থেকে ক্লাস ও ট্র্যাকারের সংশ্লিষ্ট কার্ডে সরাসরি যাওয়া যায়; কার্ডে বিষয়ের পেজে ফেরার লিংকও আছে। নির্দিষ্ট আগের/পরের বিষয়ের বাধ্যতামূলক ক্রম নেই।
+- Breadcrumb শুধু বিষয়ের অবস্থান বুঝতে সাহায্য করে, বাধ্যতামূলক যাতায়াতের পথ নয়। পুরোনো URL, canonical ও tracker storage key অপরিবর্তিত। সরানো/পুরোনো compatibility পেজগুলো নেটওয়ার্কের বাইরে থাকে।
+- নেভিগেশন সাধারণ HTML লিংকে তৈরি: JavaScript বা API ছাড়াই এবং Android/desktop-এর offline snapshot-এ চলে। অনলাইন ভিডিও ও বাইরের সেবায় ইন্টারনেট লাগে।
+
+### নেভিগেশনের ফাইল ও রক্ষণাবেক্ষণ
+
+- `scripts/site-graph.cjs` — প্রকাশ্য পেজ, বিষয়ের বিভাগ এবং দ্বিমুখী সম্পর্কের একক তালিকা।
+- `scripts/site-navigation.cjs` — ওই তালিকা থেকে হোম নেটওয়ার্ক, পেজের সংযোগ ও ক্লাস/ট্র্যাকার লিংক HTML-এ বসায়। Generated অংশগুলো START/END মন্তব্যে চিহ্নিত; সেগুলো হাতে না বদলে generator চালাও।
+- `site/assets/network.css` — responsive নেটওয়ার্ক ও সংযোগ-প্যানেলের স্টাইল। নতুন কোনো runtime dependency নেই।
+
+নতুন পেজ বা সম্পর্ক যোগ করার পর:
+
+```bash
+node scripts/site-shell.cjs
+node scripts/site-navigation.cjs
+node scripts/generate-sitemap.cjs
+node scripts/breadcrumbs.cjs
+node scripts/offline-manifest.cjs site
+node --test tests/*.test.cjs
 ```
+
+`node scripts/site-shell.cjs --check` স্থানীয় আইকন সেট এবং `node scripts/site-navigation.cjs --check` ফাইল না বদলে নেভিগেশন/shared shell হালনাগাদ আছে কি না যাচাই করে। পরীক্ষা ও Pages deployment-এ এই যাচাই চলে। Generated HTML রিপোতেই থাকে, তাই শুধু `site/` সার্ভ করলেই সাইট চলে।
+
+Browser পরীক্ষাগুলো: `tests/android-browser.cjs`, `tests/web-linked-browser.cjs`, `tests/galaxy-browser.cjs` ও `tests/accessibility-browser.cjs`। শেষটি axe-core 4.10.3 দিয়ে ১৪ ধরনের পেজে mobile/desktop ও light/dark মিলিয়ে ৫৬টি targeted audit চালায়; galaxy suite-এ দৃশ্যমান pause control-সহ আরও ৪টি audit আছে। এগুলো পূর্ণ manual accessibility certification নয়। CI test-only `playwright-core` ও `axe-core` ইনস্টল করে এবং port 8765-এ static site সার্ভ করে।
+
 
 ## ফিচারসমূহ
 
-- ⏳ পরীক্ষার লাইভ কাউন্টডাউন (২৫ জুন ২০২৭)
-- 🌳 বইয়ের মতো Tree Structure ডায়াগ্রাম হোম পেজে
+- ⏳ সম্ভাব্য পরীক্ষার তারিখের লাইভ কাউন্টডাউন (সংবাদভিত্তিক, চূড়ান্ত নয়)
+- 🕸️ হোমে Web-linked নেটওয়ার্ক ও সব বিষয়ের সরাসরি লিংক
 - 📚 বিষয়পেজ — নির্বাচিত প্রস্তুতির চেকলিস্ট; বাংলা ২য় পত্রে দেওয়া ছবিভিত্তিক নির্বাচিত প্রস্তুতি; পূর্ণ তালিকা যাচাই বাকি
 - ✅ অধ্যায় ট্র্যাকার — অগ্রগতি ব্রাউজারে অটো-সেভ হয়
 - 🎥 অনলাইন ক্লাস — 10 Minute School, Shikho ও সাবজেক্টভিত্তিক YouTube ক্লাস
@@ -93,7 +135,7 @@ Pages workflow প্রতিবার deploy করার সময় `script
 
 ## Windows ও Linux ডেস্কটপ অ্যাপ (beta)
 
-`desktop/` ফোল্ডারে Electron-এর মাধ্যমে একই ওয়েবসাইটের একটি offline snapshot প্যাকেজ করা হয়। Windows x64-এর জন্য NSIS installer এবং Linux x86_64-এর জন্য AppImage তৈরি হয়। ব্যবহারকারীর tracker তথ্য অ্যাপের নিজস্ব স্থানীয় storage-এ থাকে; ওয়েবসাইট বা অন্য ডিভাইসের সঙ্গে সিঙ্ক হয় না। সাইট পরিবর্তিত হলে নতুন অ্যাপ build দরকার; automatic update নেই। ভিডিও, বাইরের ওয়েব লিংক, WhatsApp ও Google Fonts-এর জন্য ইন্টারনেট প্রয়োজন।
+`desktop/` ফোল্ডারে Electron-এর মাধ্যমে একই ওয়েবসাইটের একটি offline snapshot প্যাকেজ করা হয়। Windows x64-এর জন্য NSIS installer এবং Linux x86_64-এর জন্য AppImage তৈরি হয়। ব্যবহারকারীর tracker তথ্য অ্যাপের নিজস্ব স্থানীয় storage-এ থাকে; ওয়েবসাইট বা অন্য ডিভাইসের সঙ্গে সিঙ্ক হয় না। সাইট পরিবর্তিত হলে নতুন অ্যাপ build দরকার; automatic update নেই। ভিডিও, বাইরের ওয়েব লিংক ও WhatsApp-এর জন্য ইন্টারনেট প্রয়োজন; নতুন snapshot-এ বাংলা ফন্ট স্থানীয়ভাবে থাকে।
 
 ```bash
 cd desktop
@@ -120,7 +162,7 @@ CI-তে আলাদা temporary self-signed certificate দিয়ে sign
 
 `desktop-lite/` হলো আলাদা Lite সংস্করণ: Windows x64-এ WebView2 এবং Linux-এ system WebKitGTK ব্যবহার করে, Electron-এর browser bundle নয়। Windows ZIP পুরো extract করে চালাতে হয়; Microsoft **.NET 10 Desktop Runtime x64** ও **Edge WebView2 Runtime** আগে থেকে না থাকলে আলাদা ইনস্টল করতে হবে। অ্যাপ unsigned, SmartScreen সতর্ক করতে পারে। Linux `.deb` Ubuntu/Debian ও WebKitGTK 4.1-এর জন্য, সিস্টেম dependencies ইনস্টল করতে হতে পারে; এটি সব distribution-এর AppImage বিকল্প নয়। Dependencies ডাউনলোড/ইনস্টল করতে ইন্টারনেট ও অতিরিক্ত জায়গা লাগতে পারে।
 
-দুটোতেই bundled snapshot ও local tracker অফলাইনে কাজ করে; ভিডিও/বাইরের লিংক ও ফন্ট অনলাইন। Lite, পুরোনো Electron অ্যাপ ও ব্রাউজারের tracker storage আলাদা এবং automatic migration/sync নেই; আগের ডেটা দরকার হলে পুরোনো অ্যাপ বা তার data মুছবেন না। নতুন site snapshot পেতে নতুন build দরকার। একটি স্থির loopback port (Windows 19828 / Linux 19829) কেবল স্থানীয় পৃষ্ঠার জন্য ব্যবহৃত হয়; একই সময়ে একাধিক instance বা port দখল থাকলে অ্যাপ চালু হবে না।
+দুটোতেই bundled snapshot ও local tracker অফলাইনে কাজ করে; ভিডিও/বাইরের লিংক অনলাইন; নতুন snapshot-এ বাংলা ফন্টও অফলাইনে থাকে। Lite, পুরোনো Electron অ্যাপ ও ব্রাউজারের tracker storage আলাদা এবং automatic migration/sync নেই; আগের ডেটা দরকার হলে পুরোনো অ্যাপ বা তার data মুছবেন না। নতুন site snapshot পেতে নতুন build দরকার। একটি স্থির loopback port (Windows 19828 / Linux 19829) কেবল স্থানীয় পৃষ্ঠার জন্য ব্যবহৃত হয়; একই সময়ে একাধিক instance বা port দখল থাকলে অ্যাপ চালু হবে না।
 
 Windows build: `dotnet publish desktop-lite/windows/HscLite.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true`, তারপর output-এর পাশে `site` কপি করতে হবে। Linux: `desktop-lite/linux/build-deb.sh`, তারপর `sudo apt install ./desktop-lite/dist/HSC-2027-Lite-0.2.1-beta-linux.deb`। `.github/workflows/desktop-lite.yml` প্যাকেজকৃত apps-এ offline tracker/theme smoke test চালায় ও manual dispatch-এ beta release ও SHA-256 প্রকাশ করে। Linux CI-তে sandbox disable কেবল headless test-এর জন্য; বিতরণকৃত অ্যাপ sandbox বন্ধ করে না।
 
