@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const allowed = /\.(?:html|css|js|png|jpe?g|webp|gif|svg|woff2?)$/i;
+const fontLicenses = new Set(['assets/fonts/OFL.txt', 'assets/fonts/OFL-noto-sans-bengali.txt']);
 function makeManifest(root) {
   const files = [];
   function walk(dir, prefix = '') {
@@ -11,7 +12,7 @@ function makeManifest(root) {
       const rel = prefix + entry.name;
       if (!/^[A-Za-z0-9_.\/-]+$/.test(rel) || entry.name.startsWith('.')) throw new Error(`Unsafe path: ${rel}`);
       if (entry.isDirectory()) walk(path.join(dir, entry.name), rel + '/');
-      else if (entry.isFile() && allowed.test(rel)) {
+      else if (entry.isFile() && (allowed.test(rel) || fontLicenses.has(rel))) {
         const data = fs.readFileSync(path.join(dir, entry.name));
         files.push({path: rel, size: data.length, sha256: crypto.createHash('sha256').update(data).digest('hex')});
       }

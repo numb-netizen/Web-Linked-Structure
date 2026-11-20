@@ -2,7 +2,6 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const vm = require('node:vm');
 const site = path.join(__dirname, '..', 'site');
 const read = name => fs.readFileSync(path.join(site, name), 'utf8');
 const subjects = ['physics','chemistry','math','biology','ict','bangla','english','sociology','civics','economics','history','accounting','business','finance','marketing'];
@@ -42,20 +41,13 @@ test('correct business subject names and both paper areas are available', () => 
   }
 });
 
-test('large-heading motion is present on every regular page and honors saved pause and reduced motion', () => {
+test('regular pages now keep headings still and retain visible content and reduced-motion support', () => {
   for (const name of fs.readdirSync(site).filter(x => x.endsWith('.html') && !x.startsWith('google'))) {
-    assert.ok(read(name).includes('assets/heading-motion.css?v=1'),name);
-    assert.ok(read(name).includes('assets/heading-motion.js?v=1'),name);
+    assert.doesNotMatch(read(name), /assets\/(?:heading-motion|light-motion|subject-scene)\.(css|js)/, name);
+    assert.ok(read(name).includes('assets/style.css?v=2'), name);
   }
-  const css = read('assets/heading-motion.css');
-  assert.match(css, /h1, h2, h1 \.grad, h2 \.grad/);
+  const css = read('assets/style.css');
+  assert.doesNotMatch(css, /@keyframes|animation:(?!none\b)/);
   assert.match(css, /prefers-reduced-motion:reduce/);
-  assert.match(css, /\.motion-paused h1/);
-  for (const saved of ['0','1']) {
-    const classes = new Set();
-    vm.runInNewContext(read('assets/heading-motion.js'),{localStorage:{getItem:()=>saved},document:{documentElement:{classList:{add:x=>classes.add(x)}}}});
-    assert.equal(classes.has('motion-paused'), saved === '1');
-  }
-  const manifest = require('../scripts/offline-manifest.cjs').makeManifest(site);
-  for (const p of ['assets/heading-motion.js','assets/heading-motion.css']) assert.ok(manifest.files.some(x=>x.path===p));
+  assert.match(css, /\.reveal,\.reveal\.reveal-pending\{opacity:1;transform:none\}/);
 });

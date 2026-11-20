@@ -34,7 +34,7 @@ test('teacher page presents all source records with paired photos and expandable
   for (const section of ['অধ্যক্ষ','বাংলা বিভাগ','ইংরেজি বিভাগ','বিজ্ঞান বিভাগ','ব্যবসায় শিক্ষা বিভাগ','মানবিক বিভাগ','শিক্ষক পরিষদ']) assert.ok(html.includes(section), section);
   for (const title of ['সভাপতি','সম্পাদক','যুগ্ম-সম্পাদক','কোষাধ্যক্ষ']) assert.ok(html.includes(title), title);
   assert.equal((html.match(/<details class="council-card">/g)||[]).length,4);
-  assert.ok(!/<details[^>]*\sopen(?:\s|>)/.test(html));
+  assert.ok(!/<details class="(?:teacher-card|council-card)"[^>]*\sopen(?:\s|>)/.test(html), 'personal contact cards remain collapsed');
   assert.match(html, /তথ্য পরে বদলে যেতে পারে/);
   assert.match(fs.readFileSync(path.join(site,'index.html'),'utf8'), /href="teachers\.html"/);
 });

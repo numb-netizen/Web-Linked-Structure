@@ -17,12 +17,12 @@ function render(scene) {
   return inserted;
 }
 
-test('every subject page opts into its own themed header scene', () => {
+test('formal subject headers use local icons instead of animated scenes', () => {
   for (const name of subjects) {
     const html = read(`${name}.html`);
-    assert.match(html, new RegExp(`<header class="page-head" data-scene="${name}">`), name);
-    assert.ok(html.includes('assets/subject-scene.css?v=3'), name);
-    assert.ok(html.includes('<script src="assets/subject-scene.js?v=3" defer></script>'), name);
+    assert.match(html, /<header class="page-head">/, name);
+    assert.doesNotMatch(html, /data-scene=|assets\/subject-scene\.(css|js)/, name);
+    assert.match(html, /<h1><svg class="icon heading-icon" aria-hidden="true" focusable="false">/, name);
   }
 });
 
@@ -72,23 +72,19 @@ test('scenes stay behind the text, ignore the pointer and respect motion prefere
   assert.match(css, /\.motion-paused \.subject-scene,\.motion-paused \.subject-scene \*\{animation:none!important\}/);
 });
 
-test('light mode has its own visible motion on every page and stops when motion is off', () => {
+test('light and dark themes share a still layout and consistent design tokens', () => {
+  const css = read('assets/theme.css');
+  assert.match(css, /:root\[data-theme="dark"\]/);
+  for (const token of ['bg','panel','line','text','muted','green2','accent-soft']) assert.ok(css.includes(`--${token}:`), token);
+  assert.doesNotMatch(css, /@keyframes|animation:|transform:/);
   for (const name of fs.readdirSync(site).filter(n => n.endsWith('.html') && !n.startsWith('google'))) {
     const html = read(name);
-    assert.ok(html.indexOf('assets/light-motion.css?v=1') > html.indexOf('assets/theme.css?v=1'), name);
+    assert.ok(html.indexOf('assets/theme.css?v=2') > html.indexOf('assets/style.css?v=2'), name);
+    assert.doesNotMatch(html, /assets\/light-motion\.css/, name);
   }
-  const css = read('assets/light-motion.css');
-  for (const rule of ['.hero-spark{', '.orbit{', '.hero::before{', '.page-head::before{', '.page-head::after{', '.subj .ic', 'footer::before{'])
-    assert.ok(css.includes(`:root[data-theme="light"] ${rule}`), rule);
-  assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{[^}]*\.page-head::before[^}]*animation:none!important\}/);
-  assert.match(css, /:root\.motion-paused\[data-theme="light"\] \.hero::before[^{]*\{animation:none!important\}/);
-  // Every selector is scoped to light mode so the dark theme stays unchanged.
-  const rules = css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@keyframes[^{]+\{(?:[^{}]*\{[^}]*\})*[^}]*\}/g, '');
-  for (const sel of rules.match(/[^{}@]+(?=\{)/g).map(s => s.trim()).filter(s => s && !/^\(|^media|^\d/.test(s)))
-    for (const part of sel.split(',')) assert.match(part.trim(), /^:root(\.motion-paused)?\[data-theme="light"\]/, part);
 });
 
-test('new motion assets are available offline', () => {
+test('legacy motion assets remain available to older cached pages offline', () => {
   const manifest = JSON.parse(read('offline-manifest.json'));
   for (const p of ['assets/subject-scene.js', 'assets/subject-scene.css', 'assets/light-motion.css'])
     assert.ok(manifest.files.some(x => x.path === p), p);

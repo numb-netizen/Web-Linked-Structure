@@ -29,18 +29,18 @@ test('the finished pre-test routine is gone and the parents meeting notice takes
   assert.doesNotMatch(html, /pretest|প্রাক-নির্বাচনী|exam-row|exam-syllabus|exam-rules/);
   assert.doesNotMatch(app, /PRE-TEST|updatePretest/);
   assert.ok(!fs.existsSync(path.join(site, 'assets/pretest-notice-2026.jpg')));
-  const structure = html.indexOf('<!-- TREE STRUCTURE -->'), notice = html.indexOf('id="parents-meeting"');
-  assert.ok(notice > html.indexOf('href="honours-info.html"') && notice < structure, 'same place as the old routine');
+  const structure = html.indexOf('<section id="structure"'), notice = html.indexOf('id="parents-meeting"');
+  assert.ok(notice > html.indexOf('id="departments"') && notice < structure, 'prominent notice before the full directory');
   for (const text of ['বিজ্ঞপ্তি · নং ২০২৬/৬৫ · ১৭ নভেম্বর ২০২৬', 'অভিভাবক সমাবেশ-২০২৬', 'বিজ্ঞান ও ব্যবসায় শিক্ষা', 'মানবিক',
     '<b>২৯</b><span>নভেম্বর</span><small>রবিবার</small>', '<b>৩০</b><span>নভেম্বর</span><small>সোমবার</small>', 'প্রফেসর মোঃ আব্দুল মান্নান চৌধুরী'])
     assert.ok(html.includes(text), text);
-  assert.equal((html.match(/📍 ০২ নং হলরুম/g) || []).length, 2);
-  assert.equal((html.match(/🕚 সকাল ১১\.০০ ঘটিকায়/g) || []).length, 2);
+  assert.equal((html.match(/০২ নং হলরুম<\/span>/g) || []).length, 2);
+  assert.equal((html.match(/সকাল ১১\.০০ ঘটিকায়<\/span>/g) || []).length, 2);
 });
 
 test('the original notice image is shown with a source label and is available offline', () => {
   assert.match(html, /<img src="assets\/parents-meeting-notice-2026\.jpg" width="1376" height="768" loading="lazy" alt="[^"]*অভিভাবক সমাবেশ-২০২৬[^"]*">/);
-  assert.match(html, /<figcaption>📖 এখান থেকে নেওয়া — কলেজের মূল বিজ্ঞপ্তি/);
+  assert.match(html, /<figcaption>[\s\S]*?এখান থেকে নেওয়া — কলেজের মূল বিজ্ঞপ্তি/);
   const file = path.join(site, 'assets/parents-meeting-notice-2026.jpg');
   assert.ok(fs.statSync(file).size < 400 * 1024, 'compressed for phones');
   const manifest = JSON.parse(fs.readFileSync(path.join(site, 'offline-manifest.json'), 'utf8'));

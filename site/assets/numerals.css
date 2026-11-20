@@ -1,0 +1,5 @@
+/* Standard, open Bengali digits, especially ১: keep letter shapes and saved values unchanged. */
+@font-face{font-family:"Bengali Numerals";src:url("fonts/bengali-numerals.woff2") format("woff2");font-style:normal;font-weight:100 900;font-display:swap;unicode-range:U+09E6-09EF}
+:root{--font-ui:"Bengali Numerals","Hind Siliguri",sans-serif}
+body,.android-phone strong{font-family:var(--font-ui)}
+.cd-cell b,.stat b,.overall .pct,.tcard .cnt,.tcard .prog{font-variant-numeric:tabular-nums;letter-spacing:normal}

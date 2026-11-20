@@ -24,7 +24,7 @@ test('every page has a working app link inside its navigation and footer', () =>
 test('app page points to published beta and explains installation and limitations', () => {
   const page = fs.readFileSync(path.join(site, 'android-app.html'), 'utf8');
   assert.ok(page.includes(`href="${apk}"`));
-  assert.match(page, /href="android-app\.html" class="active" aria-current="page"/);
+  assert.match(page, /class="active" aria-current="page" href="android-app\.html"/);
   assert.match(page, /পরীক্ষামূলক debug APK/);
   assert.match(page, /Android 6\.0 বা নতুন/);
   assert.match(page, /সাধারণ পড়াশোনা অফলাইনে/);
@@ -34,20 +34,27 @@ test('app page points to published beta and explains installation and limitation
   assert.match(page, /GitHub release দেখো/);
 });
 
-test('mobile menu toggles accessibility state and closes after navigation', () => {
-  const source = fs.readFileSync(path.join(site, 'assets/app.js'), 'utf8');
-  const nav = source.split('/* ---------- NAV ---------- */')[1].split('/* ---------- REVEAL')[0];
+test('mobile menu toggles independently, closes after navigation, outside click and Escape', () => {
+  const source = fs.readFileSync(path.join(site, 'assets/interface.js'), 'utf8');
   const handlers = {}, attrs = {}, classes = new Set();
+  let focused = false;
   const links = {classList: {
     toggle: c => { if (classes.has(c)) { classes.delete(c); return false; } classes.add(c); return true; },
-    remove: c => classes.delete(c),
+    remove: c => classes.delete(c), contains: c => classes.has(c),
   }, addEventListener: (event, fn) => handlers.link = fn};
-  const burger = {setAttribute: (name, value) => attrs[name] = value,
-    addEventListener: (event, fn) => handlers.burger = fn};
-  vm.runInNewContext(nav, {$: selector => selector === '#burger' ? burger : links});
+  const burger = {hidden:true, setAttribute: (name, value) => attrs[name] = value,
+    addEventListener: (event, fn) => handlers.burger = fn, focus: () => { focused = true; }};
+  const document = {getElementById: id => id === 'burger' ? burger : links,
+    querySelector: () => null, addEventListener: (event, fn) => handlers[event] = fn};
+  vm.runInNewContext(source, {document, window:{}});
+  assert.equal(burger.hidden, false);
   handlers.burger(); assert.equal(attrs['aria-expanded'], 'true'); assert.ok(classes.has('open'));
   handlers.link({target: {closest: () => ({})}});
   assert.equal(attrs['aria-expanded'], 'false'); assert.equal(classes.has('open'), false);
+  handlers.burger(); handlers.keydown({key:'Escape'});
+  assert.equal(attrs['aria-expanded'], 'false'); assert.ok(focused);
+  handlers.burger(); handlers.click({target:{closest:()=>null}});
+  assert.equal(attrs['aria-expanded'], 'false');
 });
 
 

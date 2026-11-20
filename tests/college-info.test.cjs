@@ -59,7 +59,7 @@ test('booklet source is labelled at the original photo, not at the top of the pa
     const photos = (html.match(/<details class="booklet-source">/g) || []).length;
     assert.ok(photos > 0, page);
     assert.equal((html.match(/<summary>📖 এখান থেকে নেওয়া — বইয়ের মূল ছবি দেখো<\/summary>/g) || []).length, photos, page);
-    const head = html.match(/<header class="college-head">[\s\S]*?<\/header>/)[0];
+    const head = html.match(/<header class="college-head(?: [^"]*)?">[\s\S]*?<\/header>/)[0];
     assert.doesNotMatch(head, /নেওয়া|booklet|পৃষ্ঠা/, page);
   }
   assert.doesNotMatch(routine, /source-tag|পৃষ্ঠা ৪৬ থেকে লেখা|পৃষ্ঠা ৪৬-এর ছবি থেকে/);

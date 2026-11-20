@@ -1,0 +1,109 @@
+/* Static, reciprocal navigation. Search and the diagram are optional enhancements. */
+#structure{scroll-margin-top:calc(var(--header-height) + 20px)}
+.structure-note{max-width:800px;color:var(--muted);font-size:15px;line-height:1.85;margin:0}
+.structure-note strong{color:var(--text);font-weight:500}
+.links .network-nav-link{color:var(--green2)}
+.network-badge{font:500 10px/1.5 Arial,sans-serif;letter-spacing:.12em;color:var(--green2);border:1px solid var(--line);border-radius:4px;background:var(--panel);padding:6px 10px;white-space:nowrap}
+.directory-search{max-width:620px;margin:28px 0 0}
+.directory-search label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px}
+.search-field{display:flex;align-items:center;gap:12px;min-height:50px;background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:0 14px}
+.search-field:focus-within{border-color:var(--green2);box-shadow:0 0 0 2px var(--accent-soft)}
+.search-field>.icon{width:19px;height:19px;color:var(--muted)}
+.search-field input{font:inherit;font-size:14px;min-width:0;flex:1;padding:12px 0;border:0;outline:none;background:transparent;color:var(--text);line-height:1.7}
+.search-field input::placeholder{color:var(--muted);opacity:1}
+.search-field input:focus-visible{outline:none}
+.search-field button{border:0;border-left:1px solid var(--line);background:transparent;color:var(--green2);font-size:12px;font-weight:600;padding:4px 0 4px 12px}
+.directory-status{font-size:12px;color:var(--muted);margin:10px 0 18px;min-height:1.7em}
+.network-directory{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:24px}
+.directory-status:not([hidden])+.network-directory{margin-top:0}
+.network-directory-group{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.network-directory-group h3{margin:0 0 13px;padding-bottom:13px;border-bottom:1px solid var(--line);font-size:16px;font-weight:600;color:var(--green2)}
+.network-chip-list{display:flex;align-items:flex-start;flex-wrap:wrap;gap:7px}
+.network-chip{display:inline-block;max-width:100%;border:1px solid var(--line);border-radius:5px;background:var(--bg);padding:6px 10px;color:var(--text);font-size:13px;line-height:1.7;overflow-wrap:anywhere;transition:border-color .16s,color .16s}
+.network-chip:hover{border-color:var(--green2);color:var(--green2)}
+.network-directory .network-chip-list{display:flex;flex-direction:column;gap:0;align-items:stretch}
+.network-directory .network-chip{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border:0;border-radius:0;background:transparent;font-size:14px}
+.network-directory .network-chip::after{content:"↗";font:400 13px/1 Arial,sans-serif;color:var(--muted);flex:none}
+.network-directory .network-chip:hover::after{color:var(--green2)}
+.network-disclaimer{margin:18px 0 0;color:var(--muted);font-size:12px;line-height:1.8;max-width:1000px}
+.directory-empty{padding:40px 20px;text-align:center;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
+.directory-empty>.icon{width:30px;height:30px;color:var(--muted)}
+.directory-empty h3{font-size:20px;margin:15px 0 9px}
+.directory-empty p{font-size:14px;color:var(--muted)}
+.directory-empty .btn{font-size:13px;min-height:42px}
+.network-diagram{margin-top:26px;border:1px solid var(--line);border-radius:9px;background:var(--panel)}
+.network-diagram>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:17px 20px;cursor:pointer;list-style:none;font-size:14px;font-weight:500}
+.network-diagram>summary::-webkit-details-marker{display:none}
+.network-diagram>summary>span:first-child{display:flex;align-items:center;gap:11px}
+.network-diagram>summary .icon{color:var(--green2);width:18px;height:18px}
+.network-diagram>summary::after{content:"+";color:var(--green2);font:400 20px/1 Arial,sans-serif}
+.network-diagram[open]>summary::after{content:"−"}
+.diagram-summary-note{font-size:12px;font-weight:400;color:var(--muted);margin-left:auto}
+.web-network{padding:22px;border-top:1px solid var(--line)}
+.network-map-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.network-map-heading p{margin:0;font-size:13px;color:var(--muted)}
+.network-map{position:relative;height:430px;margin-top:10px}
+.network-lines{position:absolute;inset:0;width:100%;height:100%;color:var(--green2);opacity:.3;pointer-events:none}
+.network-lines line{stroke:currentColor;stroke-width:1.25;vector-effect:non-scaling-stroke}
+.network-node{position:absolute;left:var(--node-x);top:var(--node-y);transform:translate(-50%,-50%);width:clamp(150px,19vw,200px);padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:9px;transition:border-color .16s;overflow-wrap:anywhere}
+.network-node>span{display:grid;place-items:center;width:31px;height:31px;color:var(--green2);background:var(--accent-soft);border-radius:6px}
+.network-node .icon{width:19px;height:19px}
+.network-node strong{font-size:16px;font-weight:600;line-height:1.5;color:var(--text)}
+.network-node small{font-size:11px;color:var(--muted)}
+.network-node--shared{border-color:var(--green2);background:var(--accent-soft)}
+.network-node:hover{border-color:var(--green2)}
+.network-map-note{margin:0;padding-top:18px;border-top:1px solid var(--line);font-size:13px;line-height:1.8;color:var(--muted)}
+.network-map-note strong{color:var(--text);font-weight:500}
+
+/* Contextual links, built from the same graph on each public page. */
+.page-connections{margin:0 auto 28px}
+.connection-panel{background:var(--panel);border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.connection-panel summary{display:flex;align-items:center;gap:14px;list-style:none;padding:15px 20px;cursor:pointer;color:var(--text)}
+.connection-panel summary::-webkit-details-marker{display:none}
+.connection-panel summary::after{content:"+";font:400 20px/1 Arial,sans-serif;color:var(--green2);flex:none}
+.connection-panel[open] summary::after{content:"−"}
+.connection-panel[open] summary{border-bottom:1px solid var(--line)}
+.connection-heading{display:flex;gap:12px;align-items:center;min-width:0;flex:1}
+.connection-heading>span:first-child{display:grid;place-items:center;width:34px;height:34px;border-radius:6px;background:var(--accent-soft);color:var(--green2);flex:none}
+.connection-heading .icon{width:19px;height:19px}
+.connection-heading strong,.connection-heading small{display:block}
+.connection-heading strong{font-size:15px;font-weight:600;line-height:1.6}
+.connection-heading small{font-size:12px;line-height:1.6;color:var(--muted)}
+.connection-count{font-size:12px;color:var(--muted);white-space:nowrap}
+.connection-groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:22px;padding:20px}
+.connection-group{min-width:0}
+.connection-group h3{margin:0 0 10px;font-size:13px;font-weight:600;color:var(--muted)}
+.connection-map-link{margin:0;padding:0 20px 18px;font-size:12px;color:var(--green2)}
+.connection-map-link a{text-decoration:underline;text-underline-offset:3px}
+.tracker-subject-link,.resource-subject-link{display:inline-block;color:var(--green2);font-size:12px;font-weight:500;line-height:1.8;text-decoration:underline;text-underline-offset:3px}
+.tracker-subject-link{margin:2px 0 8px}
+.resource-subject-link{display:block;margin-top:13px}
+.tcard[id^="track-"],.res[id^="class-"]{scroll-margin-top:calc(var(--header-height) + 20px)}
+.tcard[id^="track-"]:target,.res[id^="class-"]:target{outline:2px solid var(--green2);outline-offset:3px}
+.network-node:focus-visible,.network-chip:focus-visible,.network-nav-link:focus-visible,.connection-panel summary:focus-visible,.connection-map-link a:focus-visible,.tracker-subject-link:focus-visible,.resource-subject-link:focus-visible{outline:2px solid var(--green2);outline-offset:3px}
+.connection-panel summary:focus-visible{outline-offset:-4px}
+/* Keep app downloads out of the app itself. */
+.hsc-android-app .network-chip[data-page="android-app"]{display:none}
+@media(max-width:900px){.network-directory{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){
+  .web-network{padding:18px}
+  .network-map{height:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px 0}
+  .network-lines{display:none}
+  .network-node{position:static;transform:none;width:auto;min-width:0;padding:14px 8px;justify-content:center}
+  .network-node:last-child{grid-column:1 / -1}
+  .network-node strong{font-size:15px}
+}
+@media(max-width:520px){
+  .network-directory{grid-template-columns:minmax(0,1fr);gap:14px}
+  .network-directory-group{padding:18px}
+  .diagram-summary-note{display:none}
+  .network-diagram>summary{padding:15px}
+  .connection-panel summary{padding:14px;gap:10px}
+  .connection-heading{gap:10px}
+  .connection-heading strong{font-size:14px}
+  .connection-heading small{font-size:11px}
+  .connection-count{display:none}
+  .connection-groups{padding:16px;gap:18px}
+  .connection-map-link{padding:0 16px 16px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.network-node,.network-chip{transition:none}}

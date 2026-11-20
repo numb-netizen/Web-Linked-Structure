@@ -8,7 +8,7 @@
 @keyframes logo-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 .dabi-teaser-icon{display:inline-block;animation:icon-sway 8s ease-in-out infinite}
 @keyframes icon-sway{0%,75%,100%{transform:rotate(0)}82%{transform:rotate(-8deg)}90%{transform:rotate(7deg)}}
-.btn-p:focus-visible,.btn-p:hover,.dabi-teaser:focus-visible,.tree-dept:focus-visible{box-shadow:0 0 0 3px #b1ffca66,0 12px 28px #00c85333}
+.btn-p:focus-visible,.btn-p:hover,.dabi-teaser:focus-visible{box-shadow:0 0 0 3px #b1ffca66,0 12px 28px #00c85333}
 .marquee:hover .marquee-track{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -43,7 +43,6 @@
 .dabi-teaser[data-motion="pulse"] .dabi-teaser-icon{animation:icon-pulse 7s ease-in-out infinite}
 @keyframes icon-bob{0%,70%,100%{transform:translateY(0)}80%{transform:translateY(-5px)}90%{transform:translateY(-2px)}}
 @keyframes icon-pulse{0%,70%,100%{transform:scale(1)}82%{transform:scale(1.12)}90%{transform:scale(.98)}}
-.tree-kid:focus-visible,.tree-kid:hover{box-shadow:0 0 0 2px #00e67666}
 @media(max-width:600px){.orbit-one{width:74px;height:74px;right:7%}.orbit-two{width:52px;height:52px}.orbit-three{display:none}}
 @media(prefers-reduced-motion:reduce){.hero-orbits{display:none}.orbit,.hero .grad,.cd-card,.dabi-teaser[data-motion] .dabi-teaser-icon{animation:none!important}}
 .motion-paused .hero-orbits{display:none}

@@ -11,7 +11,9 @@ test('the news-based HSC schedule is partial, explicitly provisional and cites p
   for (const [date, subject] of [['৬ জুন, রবিবার','বাংলা ১ম পত্র'],['১৪ জুন, সোমবার','তথ্য ও যোগাযোগ প্রযুক্তি'],['২৩ জুন, বুধবার','ইতিহাস ১ম পত্র'],['১ জুলাই, বৃহস্পতিবার','পৌরনীতি ও সুশাসন ১ম পত্র'],['৭ জুলাই, বুধবার','উচ্চতর গণিত ২য় পত্র']]) assert.ok(page.includes(`<tr><td>${date}</td><td>`) && page.match(new RegExp(`<tr><td>${date}</td><td>(.*?)</td>`))[1].includes(subject), `${date}: ${subject}`);
   const home = read('index.html');
   assert.ok(home.includes('href="hsc-2027-routine.html"'));
-  assert.ok(home.includes('প্রস্তাবিত ৬ জুন ২০২৭ পর্যন্ত (চূড়ান্ত নয়)'));
+  const countdown = home.match(/<div class="cd-card"[\s\S]*?(?=\n  <div class="wrap stats")/)[0];
+  assert.ok(countdown.includes('প্রস্তাবিত ৬ জুন ২০২৭ পর্যন্ত'));
+  assert.ok(countdown.includes('সম্ভাব্য তারিখ · চূড়ান্ত নয়'));
   assert.ok(read('assets/app.js').includes('2027-06-06T10:00:00+06:00'));
   assert.ok(require('../scripts/offline-manifest.cjs').makeManifest(site).files.some(x => x.path === 'hsc-2027-routine.html'));
 });
