@@ -244,7 +244,11 @@ async function assertParticles(page, width) {
       assert.ok(explanation.noscriptRight <= explanation.cardRight,'no-script explanation stays in the card');
       await page.locator('#navLinks .network-nav-link').click();
       await page.waitForURL(/index\.html#structure$/);
-      await page.locator('.network-directory a[data-page="physics"]').click();
+      const subjectLink = page.locator('.network-directory a[data-page="physics"]');
+      // Complete the native smooth scroll before starting a second pointer action.
+      // The normal click below still checks visibility, stability and hit testing.
+      await subjectLink.evaluate(link => link.scrollIntoView({behavior:'instant',block:'center'}));
+      await subjectLink.click();
       await page.waitForURL(/physics\.html$/,{waitUntil:'load'});
       await assertLayers(page,'paused');
       await context.close();
