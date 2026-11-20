@@ -137,8 +137,13 @@ async function submit(page) {
    await context.route('**/*',route=>route.request().url().startsWith(BASE)?route.continue():route.abort());
    await page.goto(BASE+'bangla.html#bangla-mcq');
    assert.equal(await page.locator('#mcq-open').isVisible(),false);assert.equal(await page.locator('#mcq-fallback').isVisible(),true);
-   await page.locator('.mcq-intro a[href="assets/bangla-mcq-sheet.html"]').click();
-   assert.equal(await page.locator('.sheet-question').count(),130);await page.locator('.sheet-answer summary').first().click();
+   // Native keyboard activation needs no page timers/rAF for Playwright's click-stability probe.
+   // This also exercises the no-script fallback as an actual keyboard user would.
+   const sheetLink=page.locator('.mcq-intro a[href="assets/bangla-mcq-sheet.html"]');
+   assert.equal(await sheetLink.isVisible(),true);await sheetLink.press('Enter');
+   await page.waitForURL(BASE+'assets/bangla-mcq-sheet.html');
+   assert.equal(await page.locator('.sheet-question').count(),130);
+   await page.locator('.sheet-answer summary').first().press('Enter');
    assert.ok(await page.locator('.sheet-answer').first().getAttribute('open')!==null);
    await layout(page,390);
    await context.close();
