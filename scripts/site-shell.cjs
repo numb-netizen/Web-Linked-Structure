@@ -55,7 +55,7 @@ function renderHeader(id) {
   <div class="wrap nav-in">
     ${brand()}
     <div class="links" id="navLinks">${links.map(([target,label]) => `<a${target === 'network' ? ' class="network-nav-link"' : target === active ? ` class="active" aria-current="${target === id ? 'page' : 'location'}"` : ''} href="${target === 'network' ? 'index.html#structure' : target + '.html'}">${label}</a>`).join('')}<a href="#contact">যোগাযোগ</a></div>
-    <div class="nav-controls"><button class="galaxy-toggle" type="button" aria-label="অ্যানিমেশন বিরতি" aria-pressed="false" title="অ্যানিমেশন বন্ধ করুন" hidden>${icon('pause','galaxy-pause')}${icon('resume','galaxy-play')}</button><button class="theme-toggle" type="button" aria-label="ডার্ক মোড" aria-pressed="false" title="ডার্ক মোড চালু করুন" hidden>${icon('moon','theme-moon')}${icon('sun','theme-sun')}</button><button class="burger" id="burger" aria-label="মেনু" aria-controls="navLinks" aria-expanded="false" hidden>${icon('menu','menu-open')}${icon('close','menu-close')}</button></div>
+    <div class="nav-controls"><button class="theme-toggle" type="button" aria-label="ডার্ক মোড" aria-pressed="false" title="ডার্ক মোড চালু করুন" hidden>${icon('moon','theme-moon')}${icon('sun','theme-sun')}</button><button class="burger" id="burger" aria-label="মেনু" aria-controls="navLinks" aria-expanded="false" hidden>${icon('menu','menu-open')}${icon('close','menu-close')}</button></div>
   </div>
 </nav>`;
 }
@@ -95,8 +95,17 @@ function renderGalaxyBackdrop() {
 </div>
 <!-- GALAXY SKY:END -->`;
 }
+function renderGalaxyControl() {
+  return `<!-- GALAXY CONTROL:START -->
+<div class="galaxy-control" role="group" aria-label="অ্যানিমেশন সেটিংস" hidden>
+  <div class="galaxy-control-main"><button class="galaxy-toggle" type="button" aria-label="হালকা অ্যানিমেশন" aria-pressed="false" aria-describedby="galaxy-help" title="কম ইফেক্টে হালকা অ্যানিমেশন চালু করুন" hidden>${icon('leaf')}<span>হালকা অ্যানিমেশন</span><span class="galaxy-switch" aria-hidden="true"></span></button><span class="galaxy-mode-status" role="status" aria-live="polite">পূর্ণ মোড চলছে</span></div>
+  <p id="galaxy-help">পুরোনো ডিভাইসে কম ইফেক্টে অ্যানিমেশন চালু রাখুন।</p>
+</div>
+<!-- GALAXY CONTROL:END -->`;
+}
 function withShell(id, html) {
   let next = html.replace(/<nav>[\s\S]*?<\/nav>/, renderHeader(id)).replace(/<footer>[\s\S]*?<\/footer>/, renderFooter());
+  next = next.replace(/\n?<!-- GALAXY CONTROL:START -->[\s\S]*?<!-- GALAXY CONTROL:END -->\n?/g, '\n');
   next = next.replace(/<body(?:\s+data-page="[^"]+")?>/, `<body data-page="${id}">`);
   next = next.replace(/\n?<a class="skip-link"[^>]*>[^<]*<\/a>/g, '');
   next = next.replace(/\n?<!-- GALAXY SKY:START -->[\s\S]*?<!-- GALAXY SKY:END -->/g, '');
@@ -116,11 +125,11 @@ function withShell(id, html) {
   next = next.replace(/(<script src="assets\/app\.js[^"<>]*"><\/script>)/, '$1\n<script src="assets/interface.js?v=1"></script>');
   next = next.replace(/<meta name="theme-color" content="[^"]+">/, '<meta name="theme-color" content="#f8f9fb">');
   next = next.replace(/\n?<link rel="stylesheet" href="assets\/galaxy\.css[^"<>]*">/g, '');
-  next = next.replace(/(<link rel="stylesheet" href="assets\/theme\.css[^"<>]*">)/, '$1\n<link rel="stylesheet" href="assets/galaxy.css?v=2">');
+  next = next.replace(/(<link rel="stylesheet" href="assets\/theme\.css[^"<>]*">)/, '$1\n<link rel="stylesheet" href="assets/galaxy.css?v=3">');
   next = next.replace(/\n?<link rel="stylesheet" href="assets\/numerals\.css[^"<>]*">/g, '');
   next = next.replace(/(<link rel="stylesheet" href="assets\/galaxy\.css[^"<>]*">)/, '$1\n<link rel="stylesheet" href="assets/numerals.css?v=1">');
   next = next.replace(/\n?<script src="assets\/galaxy\.js[^"<>]*"><\/script>/g, '');
-  next = next.replace(/(<script src="assets\/interface\.js[^"<>]*"><\/script>)/, '$1\n<script src="assets/galaxy.js?v=2"></script>');
+  next = next.replace(/(<script src="assets\/interface\.js[^"<>]*"><\/script>)/, '$1\n<script src="assets/galaxy.js?v=3"></script>');
   // Keyboard users must be able to pan wide source images and information tables.
   next = next.replace(/<div class="(table-wrap|booklet-scroll(?: wide)?)"([^>]*)>/g, (all, className, attrs) => attrs.includes('tabindex=') ? all : `<div class="${className}"${attrs} tabindex="0" role="region" aria-label="${className === 'table-wrap' ? 'তথ্য টেবিল' : 'মূল ছবিটি'}; ডানে-বাঁয়ে সরান">`);
   next = next.replace(/<div class="ic">([^<]+)<\/div>/g, (all, value) => EMOJI[value] ? `<div class="ic">${icon(value)}</div>` : all);
@@ -129,9 +138,12 @@ function withShell(id, html) {
     next = next.replace(new RegExp(`(<h[23][^>]*>)${emoji}\\s*`, 'g'), `$1${icon(name,'inline-icon')}`);
     next = next.replace(new RegExp(`(<div class="tip[^"]*"[^>]*>)${emoji}\\s*`, 'g'), `$1${icon(name,'inline-icon')} `);
   }
+  // Keep motion settings in normal page flow, centred beneath the introduction, never in the menu.
+  if (/<header\b/.test(next)) next = next.replace(/(<header\b[^>]*>[\s\S]*?<\/header>)\s*/, `$1\n${renderGalaxyControl()}\n`);
+  else next = next.replace(/(<div class="crumbs">[\s\S]*?<\/div>)\s*/, `$1\n${renderGalaxyControl()}\n`);
   return next;
 }
-module.exports = {ICONS, EMOJI, icon, iconSprite, brand, renderHeader, renderFooter, renderGalaxyBackdrop, withShell};
+module.exports = {ICONS, EMOJI, icon, iconSprite, brand, renderHeader, renderFooter, renderGalaxyBackdrop, renderGalaxyControl, withShell};
 
 // The shared header/footer are applied by site-navigation.cjs; this CLI owns the icon asset.
 if (require.main === module) {
