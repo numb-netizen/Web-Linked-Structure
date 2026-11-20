@@ -1,5 +1,5 @@
 /* Campus × galaxy. The user's actual photo is a background, never a substitute campus.
-   CSS animates the bounded, randomly seeded decorations; reading content stays still. */
+   CSS animates bounded, randomly seeded decorations; text-motion.js adds finite entrances. */
 :root{--glass-surface:rgba(255,255,255,.88);--glass-border:rgba(134,166,164,.5);--glass-highlight:rgba(255,255,255,.92);--glass-shadow:0 12px 40px #173e410b;--sky-violet:#91c7bc;--sky-cyan:#76badb}
 :root[data-theme="dark"]{--glass-surface:rgba(20,39,50,.9);--glass-border:rgba(119,159,162,.38);--glass-highlight:rgba(200,236,232,.12);--glass-shadow:0 16px 44px #020e1728;--sky-violet:#40877d;--sky-cyan:#397d9b}
 body{isolation:isolate}
@@ -48,7 +48,8 @@ footer{border-top-color:#789b99}
 .hero{--text:#f1f6f4;--muted:#c9dcda;--green2:#b8eddd;--green:#367969;--panel:#112e38;--line:#577e7f;--accent-soft:#1b4749;--button:#d4eee4;--button-ink:#133c35;background:#071f29;padding-top:171px;border-bottom-color:#486967;isolation:isolate}
 .campus-backdrop{position:absolute;inset:108px 0 0;background:#183a3f url("college-campus.webp") center 43%/cover no-repeat;filter:saturate(.79) brightness(.94);z-index:0}
 .hero::before{inset:0;z-index:1;opacity:1!important;background:linear-gradient(90deg,#061e28f5 0%,#061e28ed 23%,#061e28c2 42%,#061e284d 69%,#061e2838 100%),linear-gradient(0deg,#071f29 0%,#071f29bd 17%,#071f2900 65%,#071f2933 100%)}
-.hero-galaxy{position:absolute;inset:108px 0 0;overflow:hidden;pointer-events:none;z-index:2}
+/* Grade decorations beneath the photo overlay so bright stars cannot wash out reading text. */
+.hero-galaxy{position:absolute;inset:108px 0 0;overflow:hidden;pointer-events:none;z-index:0}
 .hero-galaxy .galaxy-stars{opacity:.65;background-image:radial-gradient(1px 1px at 18px 26px,#e8fff4 95%,transparent),radial-gradient(1px 1px at 102px 170px,#d0eaff 95%,transparent),radial-gradient(1.5px 1.5px at 250px 85px,#f2e6bd 95%,transparent);animation-duration:38s}
 .hero-galaxy .galaxy-nebula{opacity:.45;width:78%;height:100%;min-width:360px}
 .hero-galaxy .galaxy-nebula--violet{left:-32%;top:10%;background:radial-gradient(ellipse,#30857680,transparent 68%)}
@@ -56,9 +57,6 @@ footer{border-top-color:#789b99}
 .galaxy-ribbon{position:absolute;inset:-30% -50%;display:block;background:linear-gradient(115deg,transparent 39%,#c9f3e21a 46%,#bdeaff0a 51%,transparent 57%);animation:galaxy-light-sweep 23s ease-in-out infinite alternate;opacity:.65}
 .hero-grid{z-index:3;grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr);gap:94px;min-height:537px;padding-bottom:38px;align-items:center}
 .hero-copy{min-width:0;max-width:655px}
-.hero-kicker{font-size:11px;letter-spacing:.02em;color:#d0e1df}
-.hero-kicker>span{display:inline-flex;align-items:center;gap:7px;background:#21474a9c;border-color:#8aada5;color:#d5f4e6;font-size:9px;letter-spacing:.09em}
-.hero-kicker .icon{width:13px;height:13px}
 .hero h1{font-size:clamp(37px,3.9vw,55px);line-height:1.4;letter-spacing:-.018em;margin:19px 0 21px;color:#f6faf7;text-shadow:0 2px 20px #031b1f66}
 .hero h1 .grad{color:#c2e7d5;text-shadow:0 1px 22px #071f2966}
 .hero p.sub{font-size:16px;line-height:1.9;color:#d0dfdd;max-width:550px}
@@ -66,7 +64,6 @@ footer{border-top-color:#789b99}
 .hero .btn-p:hover{background:#eefbf3;color:#133c35}
 .hero .btn-g{background:#112f3bce;border-color:#87aba8;color:#effaf5}
 .hero .btn-g:hover{background:#214c51;color:#fff;border-color:#b1dbca}
-.hero .hero-footnote{color:#c8dcd6;font-size:12px!important;margin-top:19px!important}
 .hero-quick-links{max-width:430px;background:#12333dd9;border-color:#689087;border-radius:11px;margin-top:25px}
 .hero-quick-links a{color:#e1f1ed;padding:14px 8px;font-size:12px}
 .hero-quick-links a+a{border-color:#4b716f}
@@ -133,7 +130,7 @@ footer{border-top-color:#789b99}
 @keyframes galaxy-halo-drift{from{transform:translate3d(-10px,0,0) rotate(0deg) scale(.9)}to{transform:translate3d(var(--dx),-70px,0) rotate(80deg) scale(1.15)}}
 
 @media(max-width:1200px){.hero-grid{gap:52px}.hero .stat{gap:12px}.hero .stat span{font-size:11px}}
-@media(max-width:1000px){.hero-grid{gap:32px;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}.hero h1{font-size:43px}.hero-kicker{font-size:10px;gap:7px}.hero-kicker>span{font-size:8px}.hero p.sub{font-size:15px}.hero .countdown-body{padding:16px}.hero .cd-cell b{font-size:27px}.countdown-context{gap:10px}.hero .countdown-source,.countdown-context p{font-size:10px}}
+@media(max-width:1000px){.hero-grid{gap:32px;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}.hero h1{font-size:43px}.hero p.sub{font-size:15px}.hero .countdown-body{padding:16px}.hero .cd-cell b{font-size:27px}.countdown-context{gap:10px}.hero .countdown-source,.countdown-context p{font-size:10px}}
 @media(max-width:760px){
   .hero{padding-top:315px}
   .campus-backdrop{top:76px;bottom:auto;height:330px;background-position:50% 40%;filter:saturate(.85) brightness(.95)}
@@ -144,9 +141,7 @@ footer{border-top-color:#789b99}
   .hero-grid{grid-template-columns:minmax(0,1fr);min-height:0;gap:30px;padding-bottom:34px}
   .hero-copy{max-width:620px}
   .hero h1{font-size:clamp(34px,7vw,46px);line-height:1.4;margin-top:17px}
-  .hero-kicker{font-size:10px;gap:8px;flex-wrap:wrap}
-  .hero-kicker>span{font-size:9px}
-  .hero .hero-aside{max-width:540px;width:100%;margin:0;justify-self:start}
+      .hero .hero-aside{max-width:540px;width:100%;margin:0;justify-self:start}
   .hero-quick-links{margin-top:22px;max-width:540px}
   .hero .countdown-heading{flex-direction:row;align-items:center;padding:17px 19px;flex-wrap:wrap;gap:10px}
   .hero .countdown-heading h2{font-size:18px}
@@ -166,17 +161,14 @@ footer{border-top-color:#789b99}
   .hero::before{background:linear-gradient(180deg,#071f2900 76px,#071f2926 158px,#071f29d9 293px,#071f29 387px)}
   .hero h1{font-size:36px}
   .hero p.sub{font-size:15px}
-  .hero-kicker>span{font-size:8px;padding:4px 7px}
-  .hero-kicker{font-size:9px;gap:7px}
-  .hero .countdown-heading{padding:16px 17px}
+      .hero .countdown-heading{padding:16px 17px}
   .hero .countdown-heading h2{font-size:18px}
   .hero .exam-status{font-size:9px}
   .hero .countdown-body{padding:17px}
   .hero .cd-grid{gap:7px}
   .hero .cd-cell b{font-size:30px}
   .hero .countdown-source,.countdown-context p{font-size:10px}
-  .hero .hero-footnote{font-size:11px!important}
-  .hero .stat b{font-size:24px}
+    .hero .stat b{font-size:24px}
   .hero .stat span{font-size:10px}
   .hero .stat{gap:9px;padding-right:12px}
   .campus-heading{padding:24px 20px;background-image:linear-gradient(90deg,#092933f2,#092933da),url("college-campus.webp")}
@@ -184,8 +176,7 @@ footer{border-top-color:#789b99}
 @media(max-width:350px){
   .hero h1{font-size:32px}
   .hero .btns{flex-direction:column}
-  .hero-kicker>span{font-size:8px;padding-inline:6px}
-  .hero .stat{gap:8px;padding-inline:12px}
+    .hero .stat{gap:8px;padding-inline:12px}
   .hero .stat:nth-child(odd){padding-left:0}
   .hero .stat b{font-size:21px}
   .hero .stat span{font-size:9px}

@@ -6,7 +6,10 @@ import java.util.Locale;
 
 /** Only the HTTPS site runs inside the JavaScript-enabled WebView. */
 final class NavigationPolicy {
+    // Stable offline WebView origin: changing this would orphan existing tracker storage.
     static final String HOME = "https://hsc2027.de5.net/";
+    // Downloads use the current public root, not the historical storage origin above.
+    static final String UPDATE_HOME = "https://chugc.cc.cd/";
     enum Destination { INTERNAL, EXTERNAL, BLOCKED }
 
     static Destination destination(String value) {

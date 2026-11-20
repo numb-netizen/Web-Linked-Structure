@@ -5,6 +5,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const {icon, withShell} = require('./site-shell.cjs');
 const {pages, subjectGroups, subjects, tools, college, graph, fileOf, hrefFor, neighborsOf} = require('./site-graph.cjs');
+const {renderStudyRoutines, renderRoutinePreview, renderDepartmentRoutine} = require('./study-routines.cjs');
+const {renderCollegePortals} = require('./college-portals.cjs');
 const SITE = path.resolve(__dirname, '..', 'site');
 const CSS = '<link rel="stylesheet" href="assets/network.css?v=2">';
 const NAV = '<a class="network-nav-link" href="index.html#structure">পেজ নেটওয়ার্ক</a>';
@@ -110,6 +112,7 @@ function renderConnections(id) {
   const open = neighbors.length <= 12 ? ' open' : '';
   return `<!-- PAGE CONNECTIONS:START -->
 <aside class="page-connections wrap" aria-label="এই পেজের সংযোগ">
+  <h2 class="sr-only">এই পেজের সংযোগ</h2>
   <details class="connection-panel"${open}>
     <summary><span class="connection-heading"><span>${icon('network')}</span><span><strong>এই পেজের সংযোগ</strong><small>হোমে না ফিরেই সম্পর্কিত পেজে যাও</small></span></span><span class="connection-count">${bn(neighbors.length)}টি লিংক</span></summary>
     <div class="connection-groups" role="navigation" aria-label="এই পেজের সঙ্গে সম্পর্কিত পেজগুলো">
@@ -160,10 +163,40 @@ function decorateClasses(html) {
   return html;
 }
 
+function decorateStudyContent(id, html) {
+  let next = html;
+  if (id === 'routine') {
+    const block = /<!-- STUDY ROUTINES:START -->[\s\S]*?<!-- STUDY ROUTINES:END -->/;
+    const legacy = /<section style="padding-top:10px">[\s\S]*?<\/section>/;
+    if (!block.test(next) && !legacy.test(next)) throw new Error('Cannot find the study routine content');
+    next = next.replace(block.test(next) ? block : legacy, renderStudyRoutines());
+    next = next.replace(/\n?<link rel="stylesheet" href="assets\/study-routines\.css[^"<>]*">/g, '');
+    next = next.replace(/(<link rel="stylesheet" href="assets\/style\.css[^"<>]*">)/, '$1\n<link rel="stylesheet" href="assets/study-routines.css?v=1">');
+    next = next.replace(/\n?<script src="assets\/study-routines\.js[^"<>]*"><\/script>/g, '');
+    next = next.replace('</body>', '<script src="assets/study-routines.js?v=1"></script>\n</body>');
+  }
+  if (['science', 'arts', 'commerce'].includes(id)) {
+    next = next.replace(/\n?<!-- DEPARTMENT ROUTINE:START -->[\s\S]*?<!-- DEPARTMENT ROUTINE:END -->/g, '');
+    next = next.replace(/(<header class="page-head">[\s\S]*?)(\n  <\/div>\n<\/header>)/, `$1\n${renderDepartmentRoutine(id)}$2`);
+  }
+  if (id === 'index') {
+    const block = /<!-- ROUTINE PREVIEW:START -->[\s\S]*?<!-- ROUTINE PREVIEW:END -->/;
+    next = block.test(next) ? next.replace(block, renderRoutinePreview())
+      : next.replace("<!-- COLLEGE NOTICE: PARENTS' MEETING 2026 -->", renderRoutinePreview() + "\n\n<!-- COLLEGE NOTICE: PARENTS' MEETING 2026 -->");
+  }
+  if (['index', 'college-info'].includes(id)) {
+    const block = /<!-- COLLEGE PORTALS:START -->[\s\S]*?<!-- COLLEGE PORTALS:END -->/;
+    const anchor = id === 'index' ? '<!-- WEB-LINKED NETWORK:START -->' : '<section class="college-section"><h2>কলেজের যোগাযোগ</h2>';
+    if (!block.test(next) && !next.includes(anchor)) throw new Error(`Cannot place college portals on ${id}`);
+    next = block.test(next) ? next.replace(block, renderCollegePortals()) : next.replace(anchor, renderCollegePortals() + '\n' + anchor);
+  }
+  return next;
+}
+
 function updatePage(name, html) {
   if (!html.includes('<div class="links" id="navLinks">')) return html; // Verification files are untouched.
   const id = name.replace(/\.html$/, '');
-  let next = html.replace(/\n?<link rel="stylesheet" href="assets\/network\.css\?v=[^"]+">/g, '');
+  let next = decorateStudyContent(id, html).replace(/\n?<link rel="stylesheet" href="assets\/network\.css\?v=[^"]+">/g, '');
   next = next.replace(/(<link rel="stylesheet" href="assets\/style\.css[^"<>]*">)/, `$1\n${CSS}`);
   next = next.replace(/<a class="network-nav-link"[^>]*>[^<]*<\/a>/g, '');
   next = next.replace(/(<div class="links" id="navLinks">[\s\S]*?<a href="index\.html"[^>]*>[^<]*<\/a>)/, `$1${NAV}`);

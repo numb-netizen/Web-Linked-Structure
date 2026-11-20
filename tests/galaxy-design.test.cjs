@@ -17,7 +17,7 @@ test('all 35 pages place one labelled lite-mode control inside main, never in th
     const html = read(file);
     assert.ok(html.includes(renderGalaxyBackdrop()), file);
     assert.ok(html.includes(renderGalaxyControl()), file);
-    for (const token of ['<!-- GALAXY SKY:START -->','<!-- GALAXY CONTROL:START -->','assets/galaxy.css?v=3','assets/galaxy.js?v=3','class="galaxy-toggle"','data-galaxy-field="ambient"']) assert.equal(html.split(token).length - 1, 1, `${file}: ${token}`);
+    for (const token of ['<!-- GALAXY SKY:START -->','<!-- GALAXY CONTROL:START -->','assets/galaxy.css?v=4','assets/galaxy.js?v=3','class="galaxy-toggle"','data-galaxy-field="ambient"']) assert.equal(html.split(token).length - 1, 1, `${file}: ${token}`);
     assert.ok(html.indexOf('assets/galaxy.css') > html.indexOf('assets/theme.css'), file);
     assert.ok(html.indexOf('assets/galaxy.js') > html.indexOf('assets/interface.js'), file);
     const control = html.indexOf('<!-- GALAXY CONTROL:START -->');
@@ -31,13 +31,14 @@ test('all 35 pages place one labelled lite-mode control inside main, never in th
   }
 });
 
-test('random decorations use CSS-only motion while text and the in-page control remain stationary', () => {
+test('perpetual decorations remain separate from finite text entrances and the stationary in-page control', () => {
   const html = read('index.html'), css = read('assets/galaxy.css');
   assert.match(html, /<div class="hero-galaxy" aria-hidden="true">/);
   assert.match(html, /<div class="galaxy-field" data-galaxy-field="campus"><\/div>/);
   assert.doesNotMatch(html, /<(?:h[1-6]|a|button|figure|img|p)\b[^>]*class="[^"]*galaxy-animated/);
   assert.match(css, /\.galaxy-sky\{[^}]*position:fixed[^}]*pointer-events:none/);
   assert.match(css, /\.hero-galaxy\{[^}]*pointer-events:none/);
+  assert.match(css, /\.hero-galaxy\{[^}]*z-index:0\}/, 'stars stay below the text-protecting overlay, not above it');
   assert.match(css, /\.galaxy-field\{[^}]*pointer-events:none;contain:strict/);
   assert.match(css, /\.galaxy-animated\{animation-play-state:paused\}/);
   assert.match(css, /:root\[data-galaxy-motion="running"\] \.galaxy-animated\{animation-play-state:running\}/);

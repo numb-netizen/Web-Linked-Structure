@@ -22,17 +22,32 @@ function run(now) {
   return {notes, timers, events};
 }
 
-test('every page shows both footer notes by default and loads the independent credit script', () => {
-  for (const name of fs.readdirSync(site).filter(name => name.endsWith('.html') && name !== 'googleb7da7b15e33059e0.html')) {
+test('every shared page shows separate Mahadin/Morshed attributions and loads the independent expiry script', () => {
+  const names = fs.readdirSync(site).filter(name => name.endsWith('.html') && name !== 'googleb7da7b15e33059e0.html');
+  assert.equal(names.length, 35);
+  for (const name of names) {
     const html = fs.readFileSync(path.join(site, name), 'utf8');
     assert.equal((html.match(/id="temporary-credit"/g) || []).length, 1, name);
-    assert.match(html, /<p class="temporary-credit" id="temporary-credit">Made by <strong>Mahadin &amp; Morshed<\/strong><\/p>/);
+    const block = html.match(/<div class="temporary-credit footer-credits" id="temporary-credit" role="group" aria-label="Site credits" lang="en">([\s\S]*?)<\/div>/);
+    assert.ok(block, name+' named English-language credit group');
+    assert.match(block[1], /<p class="credit-person"><span class="credit-role">Requested by<\/span><strong class="credit-name">Mahadin<\/strong><span class="credit-detail">Concept &amp; information<\/span><\/p>/);
+    assert.match(block[1], /<p class="credit-person credit-person--owner"><span class="credit-role">Built &amp; managed by<\/span><strong class="credit-name">Morshed<\/strong><span class="credit-detail">Site owner<\/span><\/p>/);
+    assert.equal((block[1].match(/class="credit-name"/g) || []).length, 2, name);
+    assert.doesNotMatch(html, /Made by <strong>Mahadin &amp; Morshed/);
     assert.match(html, /<p class="ict-inspiration" id="ict-inspiration">ICT চতুর্থ অধ্যায় থেকে অনুপ্রাণিত হয়ে বানানো<\/p>/, name);
-    assert.match(html, /src="assets\/credit\.js\?v=20261119"/);
+    assert.match(html, /src="assets\/credit\.js\?v=20261119" defer><\/script>/, 'both footer notes must exist before the expiry script runs');
   }
 });
 
-test('Made by is extended by ten days and the ICT line lasts one month', () => {
+test('attributions remain two-sided on narrow screens and the expiry can hide their entire grid', () => {
+  const css = fs.readFileSync(path.join(site, 'assets/style.css'), 'utf8');
+  assert.match(css, /\.temporary-credit\{display:grid;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+  assert.match(css, /\.credit-person--owner\{align-items:flex-end;text-align:right;border-left:1px solid var\(--line\)/);
+  assert.match(css, /@media\(max-width:480px\)\{\.temporary-credit/);
+  assert.match(css, /\[hidden\]\{display:none!important\}/, 'grid styling must never override expiry');
+});
+
+test('both attribution columns keep the extended deadline and the ICT line lasts one month', () => {
   assert.equal(new Date(credit).toISOString(), '2026-12-01T12:43:22.000Z');
   assert.equal(credit - Date.parse('2026-11-21T12:43:22Z'), 10 * 24 * 3600 * 1000);
   assert.equal(new Date(ict).toISOString(), '2026-12-19T12:43:22.000Z');

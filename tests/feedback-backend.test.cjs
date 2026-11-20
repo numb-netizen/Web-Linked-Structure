@@ -18,6 +18,15 @@ test('submit validates data and reports success, quota and server failure accura
   assert.equal((await handle(request('submit',{title:'x',body:'y'}),env,async()=>new Response('',{status:500}))).status,503);
   assert.equal((await handle(request('queue',{}),env,db)).status,401);
 });
+test('CORS accepts the new public root and stable app origins, never similar or untrusted hosts', async () => {
+  const allowed = ['https://chugc.cc.cd','https://hsc2027.de5.net','https://numb-netizen.github.io','hscapp://site','http://127.0.0.1:19828','http://127.0.0.1:19829'];
+  for (const origin of [...allowed, 'https://chugc.cc.cd.evil.example', 'http://chugc.cc.cd', 'https://evil.example']) {
+    const response = await handle(new Request(root+'submit', {method:'OPTIONS', headers:{origin}}), env);
+    assert.equal(response.status, 204);
+    assert.equal(response.headers.get('access-control-allow-origin'), allowed.includes(origin) ? origin : null, origin);
+    assert.notEqual(response.headers.get('access-control-allow-origin'), '*');
+  }
+});
 test('GitHub Actions OIDC verifies signature, identity, workflow, audience and expiry', async () => {
   const {privateKey,publicKey} = generateKeyPairSync('rsa',{modulusLength:2048});
   const jwk = publicKey.export({format:'jwk'}); Object.assign(jwk,{kid:'test',alg:'RS256'});

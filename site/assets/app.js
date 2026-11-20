@@ -17,6 +17,28 @@ tick(); setInterval(tick, 1000);
 
 /* ---------- CHAPTER TRACKER (generic, localStorage) ---------- */
 const KEY = k => "hsc2027:" + k;
+let trackerStorageWarned = false;
+function warnTrackerStorage(){
+  if(trackerStorageWarned) return;
+  trackerStorageWarned = true;
+  const item = $(".chap, .item");
+  const container = item && (item.closest(".wrap") || item.parentElement);
+  if(!container) return;
+  const notice = document.createElement("p");
+  notice.className = "storage-notice";
+  notice.id = "tracker-storage-notice";
+  notice.setAttribute("role", "status");
+  notice.textContent = "ব্রাউজারের স্টোরেজে প্রবেশ বা অগ্রগতি সংরক্ষণ করা যাচ্ছে না। এই পেজে টিক দেওয়া যাবে, কিন্তু পরিবর্তন রিলোড বা অন্য পেজে গেলে নাও থাকতে পারে।";
+  container.insertBefore(notice, container.firstChild);
+}
+function readProgress(key){
+  try { return localStorage.getItem(key); }
+  catch (_) { warnTrackerStorage(); return null; }
+}
+function saveProgress(key, done){
+  try { done ? localStorage.setItem(key, "1") : localStorage.removeItem(key); }
+  catch (_) { warnTrackerStorage(); }
+}
 function refreshCard(card){
   const chaps = card.querySelectorAll(".chap");
   const items = card.querySelectorAll(".item");
@@ -49,7 +71,7 @@ function loadState(){
   $$(".chap").forEach(el => {
     el.setAttribute("role", "checkbox");
     el.setAttribute("tabindex", "0");
-    if(localStorage.getItem(KEY(el.dataset.subject + ":" + el.dataset.chapter)) === "1")
+    if(readProgress(KEY(el.dataset.subject + ":" + el.dataset.chapter)) === "1")
       el.classList.add("done");
     el.setAttribute("aria-checked", String(el.classList.contains("done")));
   });
@@ -58,7 +80,7 @@ function loadState(){
     el.setAttribute("tabindex", "0");
     const subject = el.dataset.subject || "english-2";
     const idx = el.dataset.item != null ? el.dataset.item : i;
-    if(localStorage.getItem(KEY(subject + ":" + idx)) === "1")
+    if(readProgress(KEY(subject + ":" + idx)) === "1")
       el.classList.add("done");
     el.setAttribute("aria-checked", String(el.classList.contains("done")));
   });
@@ -76,7 +98,7 @@ function toggleChapter(el){
   el.classList.toggle("done");
   const done = el.classList.contains("done");
   el.setAttribute("aria-checked", String(done));
-  done ? localStorage.setItem(k, "1") : localStorage.removeItem(k);
+  saveProgress(k, done);
   const card = el.closest(".tcard");
   if(card) refreshCard(card);
   refreshOverall();
@@ -95,7 +117,8 @@ document.addEventListener("keydown", e => {
 const resetBtn = $("#resetBtn");
 if(resetBtn) resetBtn.addEventListener("click", () => {
   if(!confirm("সত্যিই সব অগ্রগতি মুছে ফেলতে চাও?")) return;
-  Object.keys(localStorage).filter(k => k.startsWith("hsc2027:")).forEach(k => localStorage.removeItem(k));
+  try { Object.keys(localStorage).filter(k => k.startsWith("hsc2027:")).forEach(k => localStorage.removeItem(k)); }
+  catch (_) { warnTrackerStorage(); }
   $$(".chap").forEach(el => { el.classList.remove("done"); el.setAttribute("aria-checked", "false"); });
   $$(".item").forEach(el => { el.classList.remove("done"); el.setAttribute("aria-checked", "false"); });
   refreshAll();

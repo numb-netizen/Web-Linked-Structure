@@ -9,7 +9,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const {execFileSync} = require('node:child_process');
 
-const BASE = 'https://hsc2027.de5.net';
+const {SITE_ORIGIN: BASE} = require('./site-config.cjs');
 const HOST = new URL(BASE).host;
 const ENDPOINT = 'https://api.indexnow.org/indexnow';
 const SITE = path.resolve(__dirname, '..', 'site');

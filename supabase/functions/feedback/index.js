@@ -1,6 +1,7 @@
 // Public submission + a private GitHub Actions OIDC-authenticated queue.
 // GitHub credentials never leave the Actions runner.
-const ALLOWED_ORIGINS = new Set(['https://hsc2027.de5.net', 'https://numb-netizen.github.io', 'hscapp://site', 'http://127.0.0.1:19828', 'http://127.0.0.1:19829']);
+// Keep the legacy native-app origin while allowing the new public web origin.
+const ALLOWED_ORIGINS = new Set(['https://chugc.cc.cd', 'https://hsc2027.de5.net', 'https://numb-netizen.github.io', 'hscapp://site', 'http://127.0.0.1:19828', 'http://127.0.0.1:19829']);
 const AUDIENCE = 'https://hsc2027.de5.net/feedback-processor';
 const WORKFLOW = 'numb-netizen/Temp/.github/workflows/feedback-issues.yml@refs/heads/main';
 const encoder = new TextEncoder();

@@ -1,13 +1,16 @@
 name: Test website
 on:
   push:
-    paths: ['site/**', 'tests/**', 'scripts/**', '.github/workflows/site-tests.yml']
+    paths: ['site/**', 'data/**', 'tests/**', 'scripts/**', '.github/workflows/**', 'CNAME']
+  pull_request:
+    paths: ['site/**', 'data/**', 'tests/**', 'scripts/**', '.github/workflows/**', 'CNAME']
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   test:
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -19,10 +22,10 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/browser-test" --no-save --no-package-lock playwright-core@1.56.1 axe-core@4.10.3
           python3 -m http.server 8765 --bind 127.0.0.1 --directory site > "$RUNNER_TEMP/site.log" 2>&1 &
-          for suite in android web-linked galaxy accessibility; do
+          for suite in android web-linked galaxy text-motion study-routines bangla-mcq accessibility; do
             log="$RUNNER_TEMP/$suite-browser-test.log"
             echo "::group::$suite browser tests"
-            if ! NODE_PATH="$RUNNER_TEMP/browser-test/node_modules" node "tests/$suite-browser.cjs" > "$log" 2>&1; then
+            if ! NODE_PATH="$RUNNER_TEMP/browser-test/node_modules" A11Y_REPORT="$RUNNER_TEMP/accessibility-report.json" node "tests/$suite-browser.cjs" > "$log" 2>&1; then
               cat "$log"
               python3 -c 'import sys; s=open(sys.argv[1]).read(); print("::error title="+sys.argv[2]+" browser tests::"+s.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A"))' "$log" "$suite"
               exit 1
@@ -30,3 +33,11 @@ jobs:
             cat "$log"
             echo "::endgroup::"
           done
+      - name: Upload accessibility findings for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: accessibility-report
+          path: ${{ runner.temp }}/accessibility-report.json
+          if-no-files-found: ignore
+          retention-days: 7

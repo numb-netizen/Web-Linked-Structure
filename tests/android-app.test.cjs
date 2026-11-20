@@ -34,21 +34,25 @@ test('app page points to published beta and explains installation and limitation
   assert.match(page, /GitHub release দেখো/);
 });
 
-test('mobile menu toggles independently, closes after navigation, outside click and Escape', () => {
+test('mobile menu enters its links and closes on navigation, outside focus/click and Escape', () => {
   const source = fs.readFileSync(path.join(site, 'assets/interface.js'), 'utf8');
   const handlers = {}, attrs = {}, classes = new Set();
-  let focused = false;
+  let focused = false, linkFocused = false;
+  const firstLink = {focus: () => { linkFocused = true; }};
   const links = {classList: {
     toggle: c => { if (classes.has(c)) { classes.delete(c); return false; } classes.add(c); return true; },
     remove: c => classes.delete(c), contains: c => classes.has(c),
-  }, addEventListener: (event, fn) => handlers.link = fn};
+  }, querySelector: () => firstLink, addEventListener: (event, fn) => handlers.link = fn};
   const burger = {hidden:true, setAttribute: (name, value) => attrs[name] = value,
     addEventListener: (event, fn) => handlers.burger = fn, focus: () => { focused = true; }};
   const document = {getElementById: id => id === 'burger' ? burger : links,
     querySelector: () => null, addEventListener: (event, fn) => handlers[event] = fn};
   vm.runInNewContext(source, {document, window:{}});
   assert.equal(burger.hidden, false);
-  handlers.burger(); assert.equal(attrs['aria-expanded'], 'true'); assert.ok(classes.has('open'));
+  handlers.burger(); assert.equal(attrs['aria-expanded'], 'true'); assert.ok(classes.has('open')); assert.ok(linkFocused);
+  handlers.focusin({target:{closest:()=>({})}});assert.equal(attrs['aria-expanded'], 'true', 'focus within navigation keeps it open');
+  handlers.focusin({target:{closest:()=>null}});assert.equal(attrs['aria-expanded'], 'false', 'outside focus closes the nonmodal disclosure');
+  handlers.burger();
   handlers.link({target: {closest: () => ({})}});
   assert.equal(attrs['aria-expanded'], 'false'); assert.equal(classes.has('open'), false);
   handlers.burger(); handlers.keydown({key:'Escape'});

@@ -1,0 +1,26 @@
+/* Offline, script-free reading / print view of the same MCQ bank. */
+.sheet{max-width:940px;padding-block:40px 80px}
+.sheet>header{border-bottom:2px solid var(--green);padding-bottom:28px}
+.sheet h1{font-size:38px}
+.sheet p{max-width:80ch}
+.sheet a:not(.btn){text-decoration:underline;text-underline-offset:3px;color:var(--green2)}
+.sheet-help,.sheet-provenance{color:var(--muted);font-size:14px;line-height:1.8}
+.sheet-help{margin-top:20px}
+.sheet-chapter{padding:32px 0 0}
+.sheet-chapter h2{font-size:25px;border-bottom:1px solid var(--line);padding-bottom:12px}
+.sheet-chapter h2 small{font-size:14px;color:var(--muted);margin-left:12px}
+.sheet-question{padding:22px 0;border-bottom:1px solid var(--line);break-inside:avoid}
+.sheet-question h3{font-size:18px;margin:0 0 14px;line-height:1.8}
+.sheet-question h3>span{font:600 11px/1.5 Arial,sans-serif;color:var(--muted);white-space:nowrap}
+.sheet-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px;list-style:none;padding:0;margin:0 0 15px}
+.sheet-options li{overflow-wrap:anywhere}
+.sheet-provenance{font-size:12px;margin:10px 0;overflow-wrap:anywhere}
+.sheet-answer{background:var(--accent-soft);border:1px solid var(--line);padding:10px 14px;border-radius:6px}
+.sheet-answer summary{cursor:pointer;min-height:32px;font-weight:600;color:var(--green2)}
+.sheet-answer div{padding-top:8px}
+.sheet-answer p:last-child{margin:0}
+#sources{padding:36px 0 0}
+#sources ol{padding-left:22px;overflow-wrap:anywhere;font-size:14px}
+#sources li{margin-bottom:14px}
+@media(max-width:600px){.sheet{width:calc(100% - 32px);padding-top:24px}.sheet h1{font-size:30px}.sheet-options{grid-template-columns:1fr}.sheet .btn{width:100%;text-align:center}}
+@media print{.sheet{width:100%;max-width:none;padding:0;font-size:11pt}.skip-link,.sheet .btns,.sheet .btn,.sheet-help,.sheet-answer summary{display:none!important}.sheet-question h3{font-size:11pt}.sheet-answer{background:none;border:none;padding:0}.sheet-answer:not([open])>div{display:block!important}.sheet-chapter{break-before:page}.sheet-chapter h2{break-after:avoid}.sheet-provenance{font-size:8pt}.sheet-options{grid-template-columns:1fr 1fr}a{color:inherit!important}.sheet-answer::details-content{content-visibility:visible!important}.sheet-answer div{content-visibility:visible!important}#sources{break-before:page}}

@@ -1,0 +1,2 @@
+# Keep the generated UTF-8/BOM CSV's RFC 4180 CRLF records unchanged on every OS.
+docs/bangla-mcq-sheet.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

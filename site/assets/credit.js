@@ -2,7 +2,7 @@
    site script so cached files or unrelated errors cannot hide them early. */
 (() => {
   const notes = [
-    // "Made by" credit: the original 21 November deadline, extended by 10 days.
+    // Both attribution columns keep the existing 1 December deadline.
     ['temporary-credit', '2026-12-01T12:43:22Z'],
     // "ICT চতুর্থ অধ্যায় থেকে অনুপ্রাণিত" line: shown for one month from 19 November.
     ['ict-inspiration', '2026-12-19T12:43:22Z'],

@@ -12,7 +12,7 @@ async function settled(page) {
   const until=Date.now()+10000;
   while (Date.now()<until) {
     const ready=await page.evaluate(() => document.fonts.status === 'loaded' &&
-      document.getAnimations().filter(animation => animation instanceof CSSTransition)
+      document.getAnimations().filter(animation => animation.effect.getTiming().iterations !== Infinity)
         .every(animation => animation.playState === 'finished' || animation.playState === 'idle'));
     if (ready) return;
     await delay(40);
@@ -46,6 +46,10 @@ async function assertControl(page, width) {
   assert.equal(await page.locator('.galaxy-toggle').getAttribute('aria-describedby'),'galaxy-help');
 }
 async function assertBackground(page, selector) {
+  if (selector === '.campus-backdrop') {
+    const layers = await page.evaluate(() => ({sky:Number(getComputedStyle(document.querySelector('.hero-galaxy')).zIndex),overlay:Number(getComputedStyle(document.querySelector('.hero'),'::before').zIndex)}));
+    assert.ok(layers.sky < layers.overlay, 'photo grading also protects text from bright decorative stars in every mode');
+  }
   const bg = await page.locator(selector).evaluate(node => ({image:getComputedStyle(node).backgroundImage,width:node.getBoundingClientRect().width,height:node.getBoundingClientRect().height}));
   assert.match(bg.image,/assets\/college-campus\.webp/);
   assert.ok(bg.width > 0 && bg.height > 0,'the supplied image is a visible background');
@@ -98,7 +102,7 @@ async function headingBox(page) {
 async function audit(page, label) {
   await settled(page);
   await page.addScriptTag({path:require.resolve('axe-core/axe.min.js')});
-  const violations = await page.evaluate(async () => (await axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(x=>({id:x.id,nodes:x.nodes.map(n=>({target:n.target,summary:n.failureSummary}))})));
+  const violations = await page.evaluate(async () => (await axe.run(document,{rules:{'target-size':{enabled:true}}})).violations.map(x=>({id:x.id,nodes:x.nodes.map(n=>({target:n.target,summary:n.failureSummary}))})));
   assert.deepEqual(violations,[],label);
 }
 
