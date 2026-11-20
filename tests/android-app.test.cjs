@@ -4,7 +4,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const site = path.join(__dirname, '..', 'site');
-const apk = 'https://github.com/numb-netizen/Temp/releases/download/android-v1.3-beta/HSC-2027-v1.3-beta-debug.apk';
+const {config, downloadUrl} = require('../scripts/app-release.cjs');
+const apk = downloadUrl(config.android.file);
 
 test('every page has a working app link inside its navigation and footer', () => {
   const pages = fs.readdirSync(site).filter(name => name.endsWith('.html') && name !== 'googleb7da7b15e33059e0.html');
@@ -21,11 +22,11 @@ test('every page has a working app link inside its navigation and footer', () =>
   }
 });
 
-test('app page points to published beta and explains installation and limitations', () => {
+test('app page points to the dedicated three-platform beta and explains installation and limitations', () => {
   const page = fs.readFileSync(path.join(site, 'android-app.html'), 'utf8');
   assert.ok(page.includes(`href="${apk}"`));
   assert.match(page, /class="active" aria-current="page" href="android-app\.html"/);
-  assert.match(page, /পরীক্ষামূলক debug APK/);
+  assert.match(page, /debug-signed ও debuggable APK/);
   assert.match(page, /Android 6\.0 বা নতুন/);
   assert.match(page, /সাধারণ পড়াশোনা অফলাইনে/);
   assert.match(page, /ইন্টারনেট লাগবে/);

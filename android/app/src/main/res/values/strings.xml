@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HSC 2027</string>
+    <string name="app_name">CHUGC Study Portal</string>
     <string name="offline_title">পেজটি খোলা যাচ্ছে না</string>
     <string name="offline_detail">পেজ লোড করা যায়নি। আবার চেষ্টা করো অথবা ব্রাউজারে খোলো।</string>
     <string name="error_connection">সাইটে সংযোগ করা যায়নি। ইন্টারনেট ও ফোনের DNS সেটিংস যাচাই করো।</string>

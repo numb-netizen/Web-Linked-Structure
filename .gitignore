@@ -1,2 +1,7 @@
 # Local tooling, browser binaries and visual-test artifacts
 .cache/
+__pycache__/
+*.py[cod]
+
+# Installer/checksum staging belongs in CI artifacts and GitHub Releases, not Git.
+/release/

@@ -4,9 +4,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 const root = path.join(__dirname, '..');
 const read = p => fs.readFileSync(path.join(root,p),'utf8');
-test('desktop download links and runtime, offline and data limitations are visible', () => {
+test('current downloads do not mislabel the dedicated desktop installers as legacy Lite packages', () => {
   const html = read('site/android-app.html');
-  for (const item of ['desktop-lite-v0.2.1-beta/HSC-2027-Lite-0.2.1-beta-win-x64.zip','desktop-lite-v0.2.1-beta/HSC-2027-Lite-0.2.1-beta-linux.deb','WebView2 Runtime','.NET 10 Desktop Runtime','WebKitGTK 4.1','unsigned','স্থানান্তর হয় না']) assert.ok(html.includes(item), item);
+  assert.doesNotMatch(html, /desktop-lite-v|HSC-2027-Lite|Temp\/releases/);
+  for (const item of ['Windows x64 installer', 'Linux x64 AppImage', 'Chromium', 'unsigned beta', 'অগ্রগতি আলাদা']) assert.ok(html.includes(item), item);
+  assert.match(read('docs/application-releases.md'), /desktop-lite\//);
 });
 test('lite builds bundle the site, deny permissions and gate releases on both smoke tests', () => {
   const win = read('desktop-lite/windows/Program.cs'), linux = read('desktop-lite/linux/hsc-lite.py');
