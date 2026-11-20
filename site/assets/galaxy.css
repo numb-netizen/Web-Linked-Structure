@@ -16,11 +16,18 @@ body{isolation:isolate}
 /* A stable header and solid fallbacks keep all navigation readable. */
 nav{background:rgba(255,255,255,.95);box-shadow:0 3px 30px #173e4108}
 :root[data-theme="dark"] nav{background:rgba(14,30,41,.96)}
-.galaxy-toggle{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;padding:0;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--text);flex:none}
-.galaxy-toggle .galaxy-play{display:none}
-.galaxy-toggle[aria-pressed="true"] .galaxy-pause{display:none}
-.galaxy-toggle[aria-pressed="true"] .galaxy-play{display:block}
-.galaxy-toggle:hover{border-color:var(--green2);background:var(--accent-soft)}
+/* A labelled, centred setting in page flow; no animation control in the menu. */
+.galaxy-control{position:relative;max-width:740px;margin:22px auto 28px;padding:0 20px;text-align:center}
+.galaxy-control-main{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px 14px}
+.galaxy-toggle{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;max-width:100%;padding:9px 15px;border:1px solid var(--line);border-radius:24px;background:var(--panel);color:var(--text);font-size:14px;font-weight:500;line-height:1.6}
+.galaxy-toggle>.icon{width:18px;height:18px;color:var(--green2)}
+.galaxy-toggle:hover,.galaxy-toggle[aria-pressed="true"]{border-color:var(--green2);background:var(--accent-soft)}
+.galaxy-switch{display:block;position:relative;width:30px;height:18px;border:1px solid var(--muted);border-radius:12px;background:var(--bg2);flex:none}
+.galaxy-switch::after{content:"";position:absolute;left:3px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--muted)}
+.galaxy-toggle[aria-pressed="true"] .galaxy-switch{border-color:var(--green2);background:var(--green2)}
+.galaxy-toggle[aria-pressed="true"] .galaxy-switch::after{left:15px;background:var(--panel)}
+.galaxy-mode-status{font-size:12px;color:var(--green2);line-height:1.7}
+.galaxy-control p{margin:8px 0 0;font-size:12px;line-height:1.8;color:var(--muted)}
 .dept,.subj,.chan,.res,.dabi-teaser,.connection-panel,.network-directory-group,.network-diagram,.meet-list,.meet-figure,.overall,.tcard,.rt,.group-card,.info-panel,.vigilance-card,.teacher-card,.council-card,.android-panel,.feedback-banner{border-color:var(--glass-border);border-radius:16px;box-shadow:inset 0 1px 0 var(--glass-highlight),var(--glass-shadow)}
 .portal-section{background:transparent;border-color:var(--glass-border)}
 .exam-section,.online-preview{background:transparent}
@@ -116,6 +123,7 @@ footer{border-top-color:#789b99}
 /* Keep this after every animation shorthand: no motion before a working control. */
 .galaxy-animated{animation-play-state:paused}
 :root[data-galaxy-motion="running"] .galaxy-animated{animation-play-state:running}
+:root[data-galaxy-motion="lite"] .galaxy-field>.galaxy-mote{animation-play-state:running}
 @keyframes galaxy-nebula-drift{from{transform:translate3d(-3%,0,0) scale(1)}to{transform:translate3d(10%,8%,0) scale(1.14)}}
 @keyframes galaxy-star-drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(22px,-30px,0)}}
 @keyframes galaxy-light-sweep{from{transform:translate3d(-12%,0,0) rotate(-5deg)}to{transform:translate3d(18%,5%,0) rotate(8deg)}}
@@ -127,7 +135,6 @@ footer{border-top-color:#789b99}
 @media(max-width:1200px){.hero-grid{gap:52px}.hero .stat{gap:12px}.hero .stat span{font-size:11px}}
 @media(max-width:1000px){.hero-grid{gap:32px;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}.hero h1{font-size:43px}.hero-kicker{font-size:10px;gap:7px}.hero-kicker>span{font-size:8px}.hero p.sub{font-size:15px}.hero .countdown-body{padding:16px}.hero .cd-cell b{font-size:27px}.countdown-context{gap:10px}.hero .countdown-source,.countdown-context p{font-size:10px}}
 @media(max-width:760px){
-  .galaxy-toggle{width:36px;height:36px}
   .hero{padding-top:315px}
   .campus-backdrop{top:76px;bottom:auto;height:330px;background-position:50% 40%;filter:saturate(.85) brightness(.95)}
   .hero::before{background:linear-gradient(180deg,#071f290d 76px,#071f2926 168px,#071f29c7 303px,#071f29 407px)}
@@ -175,7 +182,6 @@ footer{border-top-color:#789b99}
   .campus-heading{padding:24px 20px;background-image:linear-gradient(90deg,#092933f2,#092933da),url("college-campus.webp")}
 }
 @media(max-width:350px){
-  .galaxy-toggle{width:32px;height:34px}
   .hero h1{font-size:32px}
   .hero .btns{flex-direction:column}
   .hero-kicker>span{font-size:8px;padding-inline:6px}
@@ -185,11 +191,26 @@ footer{border-top-color:#789b99}
   .hero .stat span{font-size:9px}
   .hero .cd-cell b{font-size:26px}
 }
+/* Lite is still animated, but has fewer live nodes and no expensive glass/glow layers.
+   Slow duration alone is not the optimisation: JS actually removes excess particles. */
+:root[data-galaxy-quality="lite"]{--glass-surface:var(--panel);--glass-shadow:none}
+:root[data-galaxy-quality="lite"] *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;filter:none!important;box-shadow:none!important;text-shadow:none!important}
+:root[data-galaxy-quality="lite"] nav{background:var(--nav-bg)}
+:root[data-galaxy-quality="lite"] .hero .cd-card,:root[data-galaxy-quality="lite"] .hero-quick-links,:root[data-galaxy-quality="lite"] .campus-place{background:var(--panel)}
+:root[data-galaxy-quality="lite"] .galaxy-sky{background:var(--bg)}
+:root[data-galaxy-quality="lite"] .galaxy-sky::before{display:none}
+:root[data-galaxy-quality="lite"] [data-galaxy-field="ambient"]{opacity:.65}
+:root[data-galaxy-quality="lite"] [data-galaxy-field="ambient"] .galaxy-mote{background:var(--green2)}
+:root[data-galaxy-quality="lite"] .galaxy-nebula,:root[data-galaxy-quality="lite"] .galaxy-stars,:root[data-galaxy-quality="lite"] .galaxy-ribbon{display:none;animation:none}
+:root[data-galaxy-quality="lite"] .galaxy-mote{background:var(--tone);border-radius:50%;opacity:.4;animation-name:galaxy-mote-gentle;animation-duration:32s;animation-timing-function:linear}
+:root[data-galaxy-quality="lite"] .galaxy-mote::before,:root[data-galaxy-quality="lite"] .galaxy-mote::after{display:none}
+@keyframes galaxy-mote-gentle{from{transform:translate(0,0)}to{transform:translate(16px,-24px)}}
+
 /* Static, readable fallbacks remain available offline and with scripts disabled. */
 html:not([data-js="true"]) .hero .countdown-body{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 html:not([data-js="true"]) .hero .cd-grid{width:100%}
 .hero noscript{display:block;min-width:0;max-width:100%;font-size:12px;line-height:1.8;color:var(--muted)}
 .hero noscript p{margin:0}
 @media(max-width:1200px){html:not([data-js="true"]) .hero{padding-top:220px}html:not([data-js="true"]) .hero .campus-backdrop{top:0;height:340px}html:not([data-js="true"]) .hero .hero-galaxy{top:0}html:not([data-js="true"]) .hero .campus-place{top:22px}}
-@media(prefers-reduced-motion:reduce){.galaxy-animated{animation:none!important}.galaxy-toggle{display:none!important}.dept,.subj,.chan,.res,.dabi-teaser{transition:none!important;transform:none!important}}
+@media(prefers-reduced-motion:reduce){.galaxy-animated{animation:none!important}.galaxy-control,.galaxy-toggle{display:none!important}.dept,.subj,.chan,.res,.dabi-teaser{transition:none!important;transform:none!important}}
 @media(prefers-reduced-transparency:reduce){nav,.page-head,.dept,.subj,.chan,.res,.dabi-teaser,.connection-panel,.network-directory-group,.network-diagram,.meet-list,.meet-figure,.overall,.tcard,.rt,.group-card,.info-panel,.vigilance-card,.teacher-card,.council-card,.android-panel,.feedback-banner,.hero .cd-card,.hero-quick-links,.campus-place{background:var(--panel);-webkit-backdrop-filter:none;backdrop-filter:none}}
