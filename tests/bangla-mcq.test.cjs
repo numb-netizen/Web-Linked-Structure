@@ -104,6 +104,8 @@ test('generated browser bank, script-free sheet and spreadsheet CSV stay in sync
     assert.ok(sheet.includes(q.explanation));
   }
   assert.ok(read('docs/bangla-mcq-sheet.csv').startsWith('\uFEFF"ID"'));
+  const attributes=read('.gitattributes');
+  assert.match(attributes,/docs\/bangla-mcq-sheet\.csv -text whitespace=[^\n]*cr-at-eol/,'preserve generated RFC 4180 records instead of normalizing their CRLFs');
 });
 
 test('the complete MCQ payload is included in the existing offline resource allowlist', () => {
