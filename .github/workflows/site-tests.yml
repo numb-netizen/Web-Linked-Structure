@@ -19,10 +19,14 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/browser-test" --no-save --no-package-lock playwright-core@1.56.1 axe-core@4.10.3
           python3 -m http.server 8765 --bind 127.0.0.1 --directory site > "$RUNNER_TEMP/site.log" 2>&1 &
-          if ! NODE_PATH="$RUNNER_TEMP/browser-test/node_modules" node tests/android-browser.cjs > "$RUNNER_TEMP/browser-test.log" 2>&1; then
-            python3 -c 'import os; p=os.path.join(os.environ["RUNNER_TEMP"],"browser-test.log"); s=open(p).read(); print("::error::"+s.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A"))'
-            exit 1
-          fi
-          NODE_PATH="$RUNNER_TEMP/browser-test/node_modules" node tests/web-linked-browser.cjs
-          NODE_PATH="$RUNNER_TEMP/browser-test/node_modules" node tests/galaxy-browser.cjs
-          NODE_PATH="$RUNNER_TEMP/browser-test/node_modules" node tests/accessibility-browser.cjs
+          for suite in android web-linked galaxy accessibility; do
+            log="$RUNNER_TEMP/$suite-browser-test.log"
+            echo "::group::$suite browser tests"
+            if ! NODE_PATH="$RUNNER_TEMP/browser-test/node_modules" node "tests/$suite-browser.cjs" > "$log" 2>&1; then
+              cat "$log"
+              python3 -c 'import sys; s=open(sys.argv[1]).read(); print("::error title="+sys.argv[2]+" browser tests::"+s.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A"))' "$log" "$suite"
+              exit 1
+            fi
+            cat "$log"
+            echo "::endgroup::"
+          done

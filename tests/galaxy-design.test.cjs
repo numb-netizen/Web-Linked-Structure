@@ -47,6 +47,12 @@ test('random decorations use CSS-only motion, gated by a working pause control w
   assert.equal((script.match(/localStorage\.setItem/g) || []).length, 1);
 });
 
+test('Android offline instrumentation checks the current campus fields and motion preferences', () => {
+  const java = fs.readFileSync(path.join(__dirname, '../android/app/src/androidTest/java/bd/edu/hsc2027/OfflineSiteTest.java'), 'utf8');
+  for (const token of ['.hero-galaxy', '.galaxy-field', '.galaxy-toggle', 'data-galaxy-motion', 'prefers-reduced-motion: reduce', 'button.hidden === reduced', 'field.children.length']) assert.ok(java.includes(token), token);
+  assert.doesNotMatch(java, /hero-sparkles|motion-toggle/);
+});
+
 test('the exact uploaded campus is preserved and used as a local background, not a photo card', () => {
   const image = fs.readFileSync(path.join(site, 'assets/college-campus.webp'));
   const original = fs.readFileSync(path.join(__dirname, '../docs/images/college-campus-original.png'));

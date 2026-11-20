@@ -34,7 +34,8 @@ public class OfflineSiteTest {
             assertPage(i, web, overlay, "HSC 2027 স্টাডি প্ল্যাটফর্ম");
             assertEquals("true", js(i, web, "Boolean(document.querySelector('#cdD') && document.querySelector('#cdD').textContent !== '—')"));
             assertEquals("true", js(i, web, "location.origin === 'https://hsc2027.de5.net'"));
-            assertEquals("true", js(i, web, "(() => {const layer=document.querySelector('.hero-sparkles'); const button=document.querySelector('.motion-toggle'); return !!layer && !!button && getComputedStyle(layer).pointerEvents === 'none' && (matchMedia('(prefers-reduced-motion: reduce)').matches || layer.children.length > 0);})()"));
+            assertEquals("Offline campus decorations respect motion preferences", "true", js(i, web,
+                    "(() => {const layer=document.querySelector('.hero-galaxy'); const field=document.querySelector('.hero-galaxy .galaxy-field'); const button=document.querySelector('.galaxy-toggle'); const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches; return !!layer && !!field && !!button && getComputedStyle(layer).pointerEvents === 'none' && document.documentElement.getAttribute('data-galaxy-motion') === (reduced ? 'reduced' : 'running') && button.hidden === reduced && field.children.length === (reduced ? 0 : innerWidth <= 760 ? 45 : 86);})()"));
             // Test countdown progression with a fixed time before its target, regardless of the emulator clock.
             assertEquals("true", js(i, web, "(() => { const now=Date.now; try { Date.now=()=>target-10000; tick(); const before=document.querySelector('#cdS').textContent; Date.now=()=>target-11000; tick(); return before !== document.querySelector('#cdS').textContent; } finally { Date.now=now; tick(); } })()"));
             i.runOnMainSync(() -> web.loadUrl(NavigationPolicy.HOME + "physics.html"));
